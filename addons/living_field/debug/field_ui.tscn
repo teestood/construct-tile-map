@@ -1,0 +1,104 @@
+[gd_scene load_steps=7 format=3 uid="uid://b2wusphwosqwb"]
+
+[ext_resource type="Script" uid="uid://cpco8q0pibyig" path="res://demo/field_ui.gd" id="1_pqvgy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_enhmj"]
+bg_color = Color(0.2739, 0.32719502, 0.33, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.82, 0.82, 0.82, 1)
+border_blend = true
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+shadow_size = 2
+shadow_offset = Vector2(1, 1)
+
+[sub_resource type="SystemFont" id="SystemFont_vohag"]
+font_names = PackedStringArray("Cursive")
+subpixel_positioning = 0
+
+[sub_resource type="FontVariation" id="FontVariation_dxofk"]
+base_font = SubResource("SystemFont_vohag")
+variation_embolden = 0.5
+
+[sub_resource type="Theme" id="Theme_b3j3i"]
+default_font = SubResource("FontVariation_dxofk")
+Label/constants/outline_size = 5
+Label/constants/shadow_outline_size = 5
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_enhmj")
+TitleLabel/base_type = &"Label"
+TitleLabel/colors/font_color = Color(1, 1, 1, 1)
+TitleLabel/colors/font_shadow_color = Color(0.18, 0.18, 0.18, 1)
+TitleLabel/constants/outline_size = 5
+TitleLabel/constants/shadow_outline_size = 6
+TitleLabel/font_sizes/font_size = 20
+TitleLabel/fonts/font = SubResource("FontVariation_dxofk")
+
+[sub_resource type="Theme" id="Theme_vohag"]
+
+[node name="FieldUI" type="PanelContainer"]
+offset_left = -551.0
+offset_top = -301.0
+offset_right = -467.0
+offset_bottom = -229.0
+theme = SubResource("Theme_b3j3i")
+script = ExtResource("1_pqvgy")
+
+[node name="M" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 3
+
+[node name="V" type="VBoxContainer" parent="M"]
+layout_mode = 2
+theme = SubResource("Theme_vohag")
+
+[node name="SpeedBlock" type="HBoxContainer" parent="M/V"]
+layout_mode = 2
+
+[node name="Speed_Title" type="Label" parent="M/V/SpeedBlock"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(0.6, 0.87999994, 1, 1)
+text = "Speed:"
+
+[node name="Speed" type="Label" parent="M/V/SpeedBlock"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="M/V"]
+layout_mode = 2
+
+[node name="Nutrients_Title" type="Label" parent="M/V"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.6955, 0.37, 1)
+text = "Nutrients"
+
+[node name="Nutrients" type="VBoxContainer" parent="M/V"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="M/V"]
+layout_mode = 2
+
+[node name="Tiles_Title" type="Label" parent="M/V"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(0.81, 0.6075, 0.6075, 1)
+text = "Tiles"
+
+[node name="Soils" type="VBoxContainer" parent="M/V"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RefreshTimer" type="Timer" parent="."]

@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://c0h71qk0tpxws"]
+
+[ext_resource type="Script" uid="uid://dx64ikiwv1a72" path="res://addons/living_field/debug/ui_nutrient_line.gd" id="1_en8x2"]
+
+[node name="NutrientLine" type="HBoxContainer"]
+script = ExtResource("1_en8x2")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+
+[node name="Quantity" type="SpinBox" parent="."]
+layout_mode = 2
+max_value = 99999.0

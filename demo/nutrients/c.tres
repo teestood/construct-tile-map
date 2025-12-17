@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="NutrientStats" load_steps=2 format=3 uid="uid://d1kigwmwyrst2"]
+
+[ext_resource type="Script" uid="uid://nxht2nqbbw0o" path="res://addons/living_field/scripts/nutrition/nutrient_stats.gd" id="2_sjpon"]
+
+[resource]
+resource_name = "c"
+script = ExtResource("2_sjpon")
+name = &"c"
+full_name = &"Coricori"
+metadata/_custom_type_script = "uid://nxht2nqbbw0o"

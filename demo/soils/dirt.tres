@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="Soil" load_steps=8 format=3 uid="uid://4mih1xvrbamo"]
+
+[ext_resource type="Script" uid="uid://3l41xy7tc306" path="res://addons/living_field/scripts/soil/condition/soil_condition.gd" id="1_rwnyp"]
+[ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_s16fs"]
+[ext_resource type="Script" uid="uid://hpft6484bnuh" path="res://addons/living_field/scripts/soil/propagate_soil_transition.gd" id="3_gmyps"]
+[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/soil_transition.gd" id="3_j8oy2"]
+[ext_resource type="Script" uid="uid://d3cwq44pqyunj" path="res://addons/living_field/scripts/soil/probability_soil_transition.gd" id="4_j8oy2"]
+
+[sub_resource type="Resource" id="Resource_j8oy2"]
+script = ExtResource("3_gmyps")
+to = &"grass"
+metadata/_custom_type_script = "uid://hpft6484bnuh"
+
+[sub_resource type="Resource" id="Resource_rwnyp"]
+script = ExtResource("4_j8oy2")
+probability = 0.01
+to = &"sand"
+metadata/_custom_type_script = "uid://d3cwq44pqyunj"
+
+[resource]
+resource_name = "dirt"
+script = ExtResource("1_s16fs")
+name = &"dirt"
+transitions = Array[ExtResource("3_j8oy2")]([SubResource("Resource_j8oy2"), SubResource("Resource_rwnyp")])
+metadata/_custom_type_script = "uid://2yubyvv2nn6e"

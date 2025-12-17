@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="NutrientStats" load_steps=2 format=3 uid="uid://btrk8g40xhcq"]
+
+[ext_resource type="Script" uid="uid://nxht2nqbbw0o" path="res://addons/living_field/scripts/nutrition/nutrient_stats.gd" id="2_156on"]
+
+[resource]
+resource_name = "h"
+script = ExtResource("2_156on")
+name = &"h"
+full_name = &"Huwahuwa"
+metadata/_custom_type_script = "uid://nxht2nqbbw0o"

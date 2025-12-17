@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Seed" load_steps=3 format=3 uid="uid://bogp4yp5tawd1"]
+
+[ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrition/nutrient.gd" id="1_35rja"]
+[ext_resource type="Script" uid="uid://c4pv88b6ipnn6" path="res://addons/living_field/scripts/seed/seed.gd" id="2_q4pxs"]
+
+[resource]
+script = ExtResource("2_q4pxs")
+name = &"Seed"
+metadata/_custom_type_script = "uid://c4pv88b6ipnn6"
