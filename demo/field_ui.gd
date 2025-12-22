@@ -38,7 +38,7 @@ func _refresh():
 	_soil_dicts = {}
 	_clear_children(ui_soils)
 	target_field.recalc_soils()
-	var soils = target_field.soils
+	var soils = target_field.cells_by_soil
 	for key in soils.keys():
 		var ui_soilline = UISoilLine.instantiate(key, len(soils[key]))
 		ui_soils.add_child(ui_soilline)
@@ -57,15 +57,15 @@ func _refresh():
 
 
 func _on_GroundField_soils_changed(from: StringName, to: StringName, _coords: Vector2i):
-	_soil_dicts[from].text = str(len(target_field.soils[from]))
+	_soil_dicts[from].text = str(len(target_field.cells_by_soil[from]))
 	if not _soil_dicts.has(to):
-		var ui_tileline = UISoilLine.instantiate(to, len(target_field.soils[to]))
+		var ui_tileline = UISoilLine.instantiate(to, len(target_field.cells_by_soil[to]))
 		ui_soils.add_child(ui_tileline)
 		_soil_dicts[to] = ui_tileline.get_node_or_null("Length")
 		if Engine.is_editor_hint():
 			_fill_owner(ui_tileline, get_tree().edited_scene_root)
 
-	_soil_dicts[to].text = str(len(target_field.soils[to]))
+	_soil_dicts[to].text = str(len(target_field.cells_by_soil[to]))
 
 
 func _on_Nutrient_quantity_changed(ui_quantity: SpinBox, val: float):

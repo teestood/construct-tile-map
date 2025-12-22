@@ -1,5 +1,5 @@
 @tool
-class_name Nutrition extends DirectoryResourcePreloader
+class_name NutrientPreloader extends DirectoryResourcePreloader
 
 @export var template: Nutrient
 

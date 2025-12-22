@@ -14,7 +14,7 @@ func initialize():
 	for nut in _defaults:
 		nutrients[nut.stats.name] = nut.duplicate()
 
-func get_nutrient(nutrition: Nutrition, key: StringName) -> Nutrient:
+func get_nutrient(nutrition: NutrientPreloader, key: StringName) -> Nutrient:
 	if not nutrients.has(key):
 		nutrients[key] = nutrition.create(key, 0)
 		nutrient_added.emit(key)

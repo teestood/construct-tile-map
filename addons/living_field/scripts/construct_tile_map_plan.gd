@@ -2,12 +2,12 @@
 ## ConstructTileMapの最終生成パターンを定義するクラス
 class_name ConstructTileMapPlan extends TileMapLayer
 
-signal instance_updated
+signal ground_updated
 
 @export_tool_button("InstantConstruct", "Callable")
 var instant_construct_action = instant_construct
 
-@export var instance: GroundField
+@export var ground: GroundField
 
 @export var default_tile: int = -1
 
@@ -21,14 +21,14 @@ func _ready() -> void:
 		return
 	self_modulate = Color(1, 1, 1, 0.2)
 
-	assert(is_instance_valid(instance), "construct_tile_map must be valid")
+	assert(is_instance_valid(ground), "construct_tile_map must be valid")
 
 
 func setup_target(newtarget: GroundField) -> bool:
 	if newtarget.tile_set != tile_set:
 		return false
 	
-	instance = newtarget
+	ground = newtarget
 	return true
 	
 ## Checks if construction can be started. Returns true if construction can be started.
@@ -59,12 +59,12 @@ func instant_construct():
 			terrain_cells[key] = [coords]
 	
 	for key in terrain_cells.keys():
-		instance.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
+		ground.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
 
-	instance_updated.emit()
+	ground_updated.emit()
 
 ## 指定した座標の建築状況を進める
-func apply_to_instance(coords: Vector2i) -> Soil:
+func apply_to_ground(coords: Vector2i) -> Soil:
 	var id = get_cell_source_id(coords)
 	if id == -1:# 空タイル
 		return null
@@ -74,29 +74,29 @@ func apply_to_instance(coords: Vector2i) -> Soil:
 		push_warning(coords, "ConstructTileが未設定")
 		return null
 
-	# planのセルをinstanceに適用する
+	# planのセルをgroundに適用する
 	if not is_planned_tile(coords):
-		instance.set_cells_terrain_connect([coords], td.terrain_set, td.terrain)
-		print("[ApplyToInstance]:%s[%s(%s)]@%s" % [name, td.terrain_set, td.terrain, coords])
+		ground.set_cells_terrain_connect([coords], td.terrain_set, td.terrain)
+		print("[ApplyToGround]:%s[%s(%s)]@%s" % [name, td.terrain_set, td.terrain, coords])
 		if is_planned_tile(coords):
-			instance_updated.emit()
+			ground_updated.emit()
 			notify_runtime_tile_data_update()
 
 	return td.get_custom_data_by_layer_id(0) as Soil
 
 func is_planned_tile(coords: Vector2i):
-	return get_cell_source_id(coords) == instance.get_cell_source_id(coords) and \
-		get_cell_atlas_coords(coords) == instance.get_cell_atlas_coords(coords)
+	return get_cell_source_id(coords) == ground.get_cell_source_id(coords) and \
+		get_cell_atlas_coords(coords) == ground.get_cell_atlas_coords(coords)
 
 # 自身の座標をground_map上に一致する座標に変換
 func at_ground(coords: Vector2i):
 	return coords - _offset
 
-func clear_instance():
+func clear_ground():
 	var cells = get_used_cells()
-	instance.tile_map_data = []
+	ground.tile_map_data = []
 	if default_tile != -1:
-		instance.set_cells_terrain_connect(cells, 0, default_tile, false)
+		ground.set_cells_terrain_connect(cells, 0, default_tile, false)
 
-	instance_updated.emit()
-	instance.notify_runtime_tile_data_update()
+	ground_updated.emit()
+	ground.notify_runtime_tile_data_update()

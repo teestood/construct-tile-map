@@ -1,9 +1,9 @@
 class_name FieldContext extends RefCounted
 
-var nutrition: Nutrition
+var nutrition: NutrientPreloader
 var soils: Dictionary[StringName, Array]
 
-static func create(nutrition: Nutrition, soils: Dictionary[StringName, Array]) -> FieldContext:
+static func create(nutrition: NutrientPreloader, soils: Dictionary[StringName, Array]) -> FieldContext:
 	var ctx = FieldContext.new()
 	ctx.nutrition = nutrition
 	ctx.soils = soils

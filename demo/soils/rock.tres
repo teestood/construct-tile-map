@@ -1,10 +1,16 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=3 format=3 uid="uid://c1tb13xmcr5r1"]
+[gd_resource type="Resource" script_class="Soil" load_steps=5 format=3 uid="uid://c1tb13xmcr5r1"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_tb6hj"]
-[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/soil_transition.gd" id="2_tb6hj"]
+[ext_resource type="Script" uid="uid://c4akxsob8co07" path="res://addons/living_field/scripts/soil/transitions/soil_transition_list.gd" id="2_4p27p"]
+[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/transitions/soil_transition.gd" id="3_ku3wf"]
+
+[sub_resource type="Resource" id="Resource_n4sws"]
+script = ExtResource("2_4p27p")
+metadata/_custom_type_script = "uid://c4akxsob8co07"
 
 [resource]
 resource_name = "grass"
 script = ExtResource("1_tb6hj")
 name = &"rock"
+transition = SubResource("Resource_n4sws")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

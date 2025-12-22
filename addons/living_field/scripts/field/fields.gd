@@ -23,7 +23,7 @@ func _ready() -> void:
 			plans.append(child)
 			setting.initialize(plan)
 
-			plan.instance_updated.connect(set.bind(&"_is_instance_updated", true))
+			plan.ground_updated.connect(set.bind(&"_is_instance_updated", true))
 	
 	reset()
 
@@ -42,7 +42,7 @@ func try_construct_at(pos: Vector2i):
 	for plan in plans:
 		var coords = plan.local_to_map(pos)
 
-		var tile = plan.apply_to_instance(coords)
+		var tile = plan.apply_to_ground(coords)
 		if tile == null:
 			break # フィールド外
 		

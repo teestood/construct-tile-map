@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Soil" load_steps=3 format=3 uid="uid://b2naxlvdloysf"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_qmxpg"]
-[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/soil_transition.gd" id="2_g6adm"]
+[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/transitions/soil_transition.gd" id="2_g6adm"]
 
 [resource]
 resource_name = "wall"
