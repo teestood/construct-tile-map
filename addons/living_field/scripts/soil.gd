@@ -2,8 +2,6 @@
 class_name Soil extends Resource
 
 @export var name: StringName
-@export var require: SoilCondition
-@export var transition: SoilTransition
 @export var cost: NutrientStorage
 
 ## 土壌変化を試みる

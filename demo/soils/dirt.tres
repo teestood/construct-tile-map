@@ -1,35 +1,30 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=11 format=3 uid="uid://4mih1xvrbamo"]
+[gd_resource type="Resource" script_class="Soil" load_steps=8 format=3 uid="uid://4mih1xvrbamo"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_s16fs"]
-[ext_resource type="Script" uid="uid://c4akxsob8co07" path="res://addons/living_field/scripts/soil/transitions/soil_transition_list.gd" id="2_3h475"]
-[ext_resource type="Script" uid="uid://bi8ny4mc5c7hm" path="res://addons/living_field/scripts/soil/condition/soil_condition_nutrition.gd" id="2_ywwlt"]
-[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/transitions/soil_transition.gd" id="3_ywwlt"]
-[ext_resource type="Script" uid="uid://hpft6484bnuh" path="res://addons/living_field/scripts/soil/transitions/soil_transition_propagate.gd" id="4_krwo0"]
-[ext_resource type="Script" uid="uid://c8fc615087noe" path="res://addons/living_field/scripts/soil/transitions/soil_transition_decay.gd" id="5_2mhd0"]
-
-[sub_resource type="Resource" id="Resource_ce7ei"]
-script = ExtResource("2_ywwlt")
-nutrient_name = &"c"
-metadata/_custom_type_script = "uid://bi8ny4mc5c7hm"
+[ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrition/nutrient.gd" id="1_ywwlt"]
+[ext_resource type="Script" uid="uid://nxht2nqbbw0o" path="res://addons/living_field/scripts/nutrition/nutrient_stats.gd" id="2_2mhd0"]
+[ext_resource type="Script" uid="uid://8rx24u6h6en4" path="res://demo/nutrient_storage.gd" id="2_krwo0"]
 
 [sub_resource type="Resource" id="Resource_krwo0"]
-script = ExtResource("4_krwo0")
-to = &"grass"
-metadata/_custom_type_script = "uid://hpft6484bnuh"
+resource_name = "S"
+script = ExtResource("2_2mhd0")
+name = &"S"
+full_name = &"Sarasara"
+metadata/_custom_type_script = "uid://nxht2nqbbw0o"
+
+[sub_resource type="Resource" id="Resource_2mhd0"]
+script = ExtResource("1_ywwlt")
+stats = SubResource("Resource_krwo0")
+metadata/_custom_type_script = "uid://dukfighedo7m8"
 
 [sub_resource type="Resource" id="Resource_tfw6o"]
-script = ExtResource("5_2mhd0")
-metadata/_custom_type_script = "uid://c8fc615087noe"
-
-[sub_resource type="Resource" id="Resource_ywwlt"]
-script = ExtResource("2_3h475")
-transitions = Array[ExtResource("3_ywwlt")]([SubResource("Resource_krwo0"), SubResource("Resource_tfw6o")])
-metadata/_custom_type_script = "uid://c4akxsob8co07"
+script = ExtResource("2_krwo0")
+_defaults = Array[ExtResource("1_ywwlt")]([SubResource("Resource_2mhd0")])
+metadata/_custom_type_script = "uid://8rx24u6h6en4"
 
 [resource]
 resource_name = "dirt"
 script = ExtResource("1_s16fs")
 name = &"dirt"
-require = SubResource("Resource_ce7ei")
-transition = SubResource("Resource_ywwlt")
+cost = SubResource("Resource_tfw6o")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

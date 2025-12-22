@@ -3,7 +3,7 @@ class_name SoilTransitionDecay extends SoilTransition
 
 @export var to: StringName = &"dirt"
 
-func _challenge(ground: GroundField, coords: Vector2i) -> StringName:
+func challenge(ground: GroundField, coords: Vector2i) -> StringName:
 	var td = ground.get_cell_tile_data(coords)
 	var soil = Soil.from_tiledata(td)
 	

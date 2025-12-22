@@ -3,7 +3,7 @@ class_name SoilTransitionPropagate extends SoilTransition
 @export var to: StringName = &"dirt"
 @export var probability: float = 1.
 
-func _challenge(ground: GroundField, coords: Vector2i) -> StringName:
+func challenge(ground: GroundField, coords: Vector2i) -> StringName:
 	var prob = 0.
 	var cells = ground.get_surrounding_cells(coords)
 	for c in cells:

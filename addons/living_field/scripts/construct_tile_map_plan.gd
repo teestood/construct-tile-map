@@ -7,7 +7,7 @@ signal ground_updated
 @export_tool_button("InstantConstruct", "Callable")
 var instant_construct_action = instant_construct
 
-@export var ground: GroundField
+@export var tilemap: TileMapLayer
 
 @export var default_tile: int = -1
 
@@ -21,16 +21,8 @@ func _ready() -> void:
 		return
 	self_modulate = Color(1, 1, 1, 0.2)
 
-	assert(is_instance_valid(ground), "construct_tile_map must be valid")
+	assert(is_instance_valid(tilemap), "construct_tile_map must be valid")
 
-
-func setup_target(newtarget: GroundField) -> bool:
-	if newtarget.tile_set != tile_set:
-		return false
-	
-	ground = newtarget
-	return true
-	
 ## Checks if construction can be started. Returns true if construction can be started.
 func can_construct() -> bool:
 	var cells = get_used_cells()
@@ -59,7 +51,7 @@ func instant_construct():
 			terrain_cells[key] = [coords]
 	
 	for key in terrain_cells.keys():
-		ground.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
+		tilemap.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
 
 	ground_updated.emit()
 
@@ -76,7 +68,7 @@ func apply_to_ground(coords: Vector2i) -> Soil:
 
 	# planのセルをgroundに適用する
 	if not is_planned_tile(coords):
-		ground.set_cells_terrain_connect([coords], td.terrain_set, td.terrain)
+		tilemap.set_cells_terrain_connect([coords], td.terrain_set, td.terrain)
 		print("[ApplyToGround]:%s[%s(%s)]@%s" % [name, td.terrain_set, td.terrain, coords])
 		if is_planned_tile(coords):
 			ground_updated.emit()
@@ -85,8 +77,8 @@ func apply_to_ground(coords: Vector2i) -> Soil:
 	return td.get_custom_data_by_layer_id(0) as Soil
 
 func is_planned_tile(coords: Vector2i):
-	return get_cell_source_id(coords) == ground.get_cell_source_id(coords) and \
-		get_cell_atlas_coords(coords) == ground.get_cell_atlas_coords(coords)
+	return get_cell_source_id(coords) == tilemap.get_cell_source_id(coords) and \
+		get_cell_atlas_coords(coords) == tilemap.get_cell_atlas_coords(coords)
 
 # 自身の座標をground_map上に一致する座標に変換
 func at_ground(coords: Vector2i):
@@ -94,9 +86,9 @@ func at_ground(coords: Vector2i):
 
 func clear_ground():
 	var cells = get_used_cells()
-	ground.tile_map_data = []
+	tilemap.tile_map_data = []
 	if default_tile != -1:
-		ground.set_cells_terrain_connect(cells, 0, default_tile, false)
+		tilemap.set_cells_terrain_connect(cells, 0, default_tile, false)
 
 	ground_updated.emit()
-	ground.notify_runtime_tile_data_update()
+	tilemap.notify_runtime_tile_data_update()
