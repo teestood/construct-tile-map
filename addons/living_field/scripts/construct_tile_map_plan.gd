@@ -2,16 +2,19 @@
 ## ConstructTileMapの最終生成パターンを定義するクラス
 class_name ConstructTileMapPlan extends TileMapLayer
 
-signal ground_updated
-
 @export_tool_button("InstantConstruct", "Callable")
 var instant_construct_action = instant_construct
 
-@export var tilemap: TileMapLayer
+@export_tool_button("AdvanceBuild", "Callable")
+var advance_build_action = advance_build
 
+@export var ground: GroundField 
 @export var default_tile: int = -1
 
-var _offset: Vector2i # ground_mapとの差
+var _progress_cells: Array[Vector2i] = []
+var progress_cells: Array[Vector2i]:
+	get:
+		return _progress_cells
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -21,7 +24,16 @@ func _ready() -> void:
 		return
 	self_modulate = Color(1, 1, 1, 0.2)
 
-	assert(is_instance_valid(tilemap), "construct_tile_map must be valid")
+	assert(is_instance_valid(ground), "construct_tile_map must be valid")
+	_update_progress_cells()
+
+func _update_progress_cells():
+	_progress_cells = []
+	var cells = get_used_cells()
+	for coords in cells:
+		if is_planned_tile(coords):
+			continue
+		_progress_cells.append(coords)
 
 ## Checks if construction can be started. Returns true if construction can be started.
 func can_construct() -> bool:
@@ -51,44 +63,43 @@ func instant_construct():
 			terrain_cells[key] = [coords]
 	
 	for key in terrain_cells.keys():
-		tilemap.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
+		ground.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
 
-	ground_updated.emit()
+func advance_build() -> bool:
+	if _progress_cells.size() == 0:
+		_update_progress_cells()
+		if _progress_cells.size() == 0:
+			return true
+	
+	var l = len(_progress_cells)
+	var coords = _progress_cells[randi_range(0, l-1)]
+	var to = get_cell_tile_data(coords)
+	
+	apply_to_ground(coords)
+	return false
 
 ## 指定した座標の建築状況を進める
 func apply_to_ground(coords: Vector2i) -> Soil:
+	if progress_cells.has(coords) == false:
+		return null
 	var id = get_cell_source_id(coords)
 	if id == -1:# 空タイル
 		return null
-	var td = get_cell_tile_data(coords)
+	var to = get_cell_tile_data(coords)
 
-	if td == null:
+	if to == null:
 		push_warning(coords, "ConstructTileが未設定")
 		return null
 
-	# planのセルをgroundに適用する
-	if not is_planned_tile(coords):
-		tilemap.set_cells_terrain_connect([coords], td.terrain_set, td.terrain)
-		print("[ApplyToGround]:%s[%s(%s)]@%s" % [name, td.terrain_set, td.terrain, coords])
-		if is_planned_tile(coords):
-			ground_updated.emit()
-			notify_runtime_tile_data_update()
+	ground.update_terrain(to, coords)
+	_progress_cells.erase(coords)
 
-	return td.get_custom_data_by_layer_id(0) as Soil
+
+	return Soil.from_tiledata(to)
 
 func is_planned_tile(coords: Vector2i):
-	return get_cell_source_id(coords) == tilemap.get_cell_source_id(coords) and \
-		get_cell_atlas_coords(coords) == tilemap.get_cell_atlas_coords(coords)
+	return get_cell_source_id(coords) == ground.get_cell_source_id(coords) and \
+		get_cell_atlas_coords(coords) == ground.get_cell_atlas_coords(coords)
 
-# 自身の座標をground_map上に一致する座標に変換
-func at_ground(coords: Vector2i):
-	return coords - _offset
-
-func clear_ground():
-	var cells = get_used_cells()
-	tilemap.tile_map_data = []
-	if default_tile != -1:
-		tilemap.set_cells_terrain_connect(cells, 0, default_tile, false)
-
-	ground_updated.emit()
-	tilemap.notify_runtime_tile_data_update()
+func map_to_global(coords: Vector2i) -> Vector2:
+	return to_global(map_to_local(coords))

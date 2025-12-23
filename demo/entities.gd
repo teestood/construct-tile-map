@@ -30,7 +30,6 @@ func _on_Spawner_queued(req: PlantSpawnRequest, spawner: PlantSpawner) -> void:
 	add_child(plant)
 
 	spawner.accept_spawn(plant)
-	print("Spawned: %s" % plant.name)
 
 func _pick_rand(l: Array) -> Vector2i:
 	var idx = randi() % l.size()

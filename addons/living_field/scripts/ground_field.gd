@@ -19,6 +19,7 @@ var _recalc_soils_action = recalc_soils
 
 #signal built
 signal soils_changed(from: StringName, to: StringName, coords: Vector2i)
+signal collision_updated()
 
 @export var challenge_rate = .1
 @export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
@@ -88,6 +89,16 @@ func replace_soil(from: StringName, to: StringName, coords: Vector2i):
 	for node in _tile_dicts[coords]:
 		if node.has_signal("soil_changed"):
 			node.emit_signal("soil_changed", from, to)
+
+func update_terrain(to: TileData, coords: Vector2i):
+	var from = get_cell_tile_data(coords)
+	var fsoil = Soil.from_tiledata(from)
+	var tsoil = Soil.from_tiledata(to)
+	print("[GroundField.update_terrain]: %s[%s(%s)]@%s" % [name, to.terrain_set, to.terrain, coords])
+	if fsoil.has_collision != tsoil.has_collision:
+		print("[GroundField.update_terrain]: Collision changed at ", coords, ": ", fsoil.has_collision, " -> ", tsoil.has_collision)
+		collision_updated.emit.call_deferred()
+	set_cells_terrain_connect([coords], to.terrain_set, to.terrain)
 
 ## 指定した土壌名に対応するTerrain情報を取得する
 func get_terrain(key: StringName) -> PackedInt32Array:

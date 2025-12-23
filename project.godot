@@ -38,3 +38,8 @@ navigation_polygon_source_geometry_group=""
 [navigation]
 
 2d/use_edge_connections=false
+
+[physics]
+
+2d/default_gravity=0.0
+2d/default_gravity_vector=Vector2(0, 0)

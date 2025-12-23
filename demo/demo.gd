@@ -3,6 +3,8 @@ extends Node2D
 @export var field: Fields
 @export var region: NavigationRegion2D
 
+@export var time_scale: float = 1.0
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	field.instance_updated.connect(func():
@@ -10,7 +12,5 @@ func _ready() -> void:
 		region.bake_navigation_polygon()
 	)
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	pass
+	if time_scale != 1.0:
+		Engine.time_scale = time_scale

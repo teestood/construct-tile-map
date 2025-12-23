@@ -3,6 +3,7 @@ class_name Soil extends Resource
 
 @export var name: StringName
 @export var cost: NutrientStorage
+@export var has_collision: bool = false
 
 ## 土壌変化を試みる
 func _to_string() -> String:

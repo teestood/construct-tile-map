@@ -1,24 +1,9 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=8 format=3 uid="uid://ju0f0cxwtxrk"]
+[gd_resource type="Resource" script_class="Soil" load_steps=2 format=3 uid="uid://ju0f0cxwtxrk"]
 
-[ext_resource type="Script" uid="uid://3l41xy7tc306" path="res://addons/living_field/scripts/soil/condition/soil_condition.gd" id="1_bpaho"]
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_eysgy"]
-[ext_resource type="Script" uid="uid://bi8ny4mc5c7hm" path="res://addons/living_field/scripts/soil/condition/soil_condition_nutrition.gd" id="2_emo3m"]
-[ext_resource type="Script" uid="uid://bbxm0vbienekh" path="res://addons/living_field/scripts/soil/transitions/soil_transition.gd" id="2_p275e"]
-[ext_resource type="Script" uid="uid://c8fc615087noe" path="res://addons/living_field/scripts/soil/transitions/soil_transition_decay.gd" id="5_50m07"]
-
-[sub_resource type="Resource" id="Resource_135nx"]
-script = ExtResource("2_emo3m")
-nutrient_name = &"c"
-metadata/_custom_type_script = "uid://bi8ny4mc5c7hm"
-
-[sub_resource type="Resource" id="Resource_xyans"]
-script = ExtResource("5_50m07")
-metadata/_custom_type_script = "uid://c8fc615087noe"
 
 [resource]
 resource_name = "grass"
 script = ExtResource("1_eysgy")
 name = &"grass"
-requires = Array[ExtResource("1_bpaho")]([SubResource("Resource_135nx")])
-transitions = Array[ExtResource("2_p275e")]([SubResource("Resource_xyans")])
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

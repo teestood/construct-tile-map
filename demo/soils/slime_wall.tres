@@ -21,4 +21,5 @@ resource_name = "wall"
 script = ExtResource("1_h2u1c")
 name = &"slime_wall"
 cost = SubResource("Resource_uouod")
+has_collision = true
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"
