@@ -1,4 +1,4 @@
 class_name FieldSetting extends Resource
 
-func initialize(plan: ConstructTileMapPlan):
+func initialize(plan: ConstructPlan):
 	pass

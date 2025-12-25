@@ -1,6 +1,6 @@
 class_name Worker extends RigidBody2D
 
-@export var plan: ConstructTileMapPlan
+@export var plan: ConstructPlan
 @onready var agent: NavigationAgent2D = $NavigationAgent2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var timer: Timer = $Timer
@@ -38,28 +38,7 @@ func _physics_process(_delta: float) -> void:
 				state = Worker.State.IDLE
 				return
 
-			var target_pos = plan.map_to_global(target_coords)
-			var space = get_world_2d().direct_space_state
-			var query = PhysicsShapeQueryParameters2D.new()
-			query.transform = Transform2D(0, target_pos)
-			query.shape = tileshape
-			for result in space.intersect_shape(query):
-				if result.collider is RigidBody2D:
-					var node = result.collider as RigidBody2D
-					var diff = node.global_position - target_pos
-					print("apply impulse to: ", result.collider.name, "@", diff.normalized() * 200)
-					node.apply_impulse(diff.normalized() * 200, diff)
-			
-			state = Worker.State.WORK
-
-			var anim = TileBuildAnimation.instantiate(plan, target_coords)
-			plan.ground.add_child(anim)
-
-			await anim.finished
-			print("applying to ground at: ", target_coords)
-			plan.apply_to_ground(target_coords)
-			state = Worker.State.IDLE
-
+			_build_tile()
 		return
 		
 	
@@ -73,6 +52,31 @@ func _physics_process(_delta: float) -> void:
 	apply_central_force(global_position.direction_to(pos) * speed)
 
 	sprite.flip_h =  0 < linear_velocity.x
+
+func _build_tile():
+	# 建設予定地内のオブジェクトをどかせる
+	var target_pos = plan.map_to_global(target_coords)
+	var space = get_world_2d().direct_space_state
+	var query = PhysicsShapeQueryParameters2D.new()
+	query.transform = Transform2D(0, target_pos)
+	query.shape = tileshape
+	for result in space.intersect_shape(query):
+		if result.collider is RigidBody2D:
+			var node = result.collider as RigidBody2D
+			var diff = node.global_position - target_pos
+			print("apply impulse to: ", result.collider.name, "@", diff.normalized() * 200)
+			node.apply_impulse(diff.normalized() * 200, diff)
+	
+	state = Worker.State.WORK
+
+	# 建設アニメーションを再生し、完了後に地形を適用する
+	var anim = TileBuildAnimation.instantiate(plan, target_coords)
+	plan.ground.add_child(anim)
+
+	await anim.finished
+	print("applying to ground at: ", target_coords)
+	plan.apply_to_ground(target_coords)
+	state = Worker.State.IDLE
 
 func _on_timer_timeout() -> void:
 	if state != Worker.State.IDLE:

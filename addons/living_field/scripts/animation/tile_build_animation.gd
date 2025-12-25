@@ -1,7 +1,10 @@
+## TileBuildAnimation
+## Animation played when a tile is built.
 class_name TileBuildAnimation extends Sprite2D
 
-signal finished
+signal finished ## Emitted when the animation is finished.
 
+## Setup the animation with the given tilemap and coords.
 func setup(tilemap: TileMapLayer, coords: Vector2i) -> void:
 	var id = tilemap.get_cell_source_id(coords)
 	if id == -1:
@@ -16,6 +19,7 @@ func setup(tilemap: TileMapLayer, coords: Vector2i) -> void:
 	offset = -tiledata.texture_origin
 	texture = src.texture
 	position = tilemap.map_to_local(coords)
+	z_index = tiledata.z_index
 
 	region_enabled = true
 	region_rect = Rect2(
@@ -23,6 +27,7 @@ func setup(tilemap: TileMapLayer, coords: Vector2i) -> void:
 		src.texture_region_size,
 	)
 
+## Instantiate a TileBuildAnimation at the given tilemap and coords.
 static func instantiate(tilemap: TileMapLayer, coords: Vector2i, duration: float = .5) -> TileBuildAnimation:
 	var anim = TileBuildAnimation.new()
 	anim.setup(tilemap, coords)

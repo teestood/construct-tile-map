@@ -1,5 +1,5 @@
 @tool
-class_name ResetTileMapPlan extends ConstructTileMapPlan
+class_name ResetConstructPlan extends ConstructPlan
 
 @export_tool_button("CopyConstruct", "Callable")
 @warning_ignore("unused_private_class_variable")

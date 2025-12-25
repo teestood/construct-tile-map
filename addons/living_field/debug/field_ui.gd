@@ -57,6 +57,7 @@ func _refresh():
 
 
 func _on_GroundField_soils_changed(from: StringName, to: StringName, _coords: Vector2i):
+	print("SOIL CHANGED:", from, "->", to)
 	_soil_dicts[from].text = str(len(target_field.cells_by_soil[from]))
 	if not _soil_dicts.has(to):
 		var ui_tileline = UISoilLine.instantiate(to, len(target_field.cells_by_soil[to]))

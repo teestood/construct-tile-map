@@ -8,11 +8,6 @@ var hold: bool = false
 func _ready() -> void:
 	pass # Replace with function body.
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	if hold:
-		field.try_construct_at_cursor()
-
 func _input(ev: InputEvent) -> void:
 	if ev is InputEventMouseButton:
 		if ev.button_index == MOUSE_BUTTON_LEFT:

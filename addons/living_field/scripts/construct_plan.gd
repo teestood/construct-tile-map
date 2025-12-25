@@ -1,6 +1,6 @@
 @tool
 ## ConstructTileMapの最終生成パターンを定義するクラス
-class_name ConstructTileMapPlan extends TileMapLayer
+class_name ConstructPlan extends TileMapLayer
 
 @export_tool_button("InstantConstruct", "Callable")
 var instant_construct_action = instant_construct
@@ -18,7 +18,7 @@ var progress_cells: Array[Vector2i]:
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
-		self_modulate = Color(1, 1, 1, 0.5)
+		self_modulate = Color(1, 1, 1, 1.)
 		collision_enabled = false
 		navigation_enabled = false
 		return
@@ -55,7 +55,7 @@ func instant_construct():
 	var terrain_cells: Dictionary[PackedInt32Array, Array]
 	for coords in cells:
 		var td = get_cell_tile_data(coords)
-		var key:PackedInt32Array = [td.terrain_set, td.terrain]
+		var key: PackedInt32Array = [td.terrain_set, td.terrain]
 
 		if terrain_cells.has(key):
 			terrain_cells[key].append(coords)

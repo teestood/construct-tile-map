@@ -90,14 +90,61 @@ func replace_soil(from: StringName, to: StringName, coords: Vector2i):
 		if node.has_signal("soil_changed"):
 			node.emit_signal("soil_changed", from, to)
 
-func update_terrain(to: TileData, coords: Vector2i):
+func update_terrain(to: TileData, coords: Vector2i) -> bool:
 	var from = get_cell_tile_data(coords)
-	var fsoil = Soil.from_tiledata(from)
-	var tsoil = Soil.from_tiledata(to)
+	var from_soil: Soil = Soil.from_tiledata(from)
+	var to_soil: Soil = Soil.from_tiledata(to)
+	
+	if not _are_soils_valid(from_soil, to_soil, coords):
+		return false
+	
+	if not _can_afford_terrain_change(from_soil, to_soil):
+		return false
+	
 	print("[GroundField.update_terrain]: %s[%s(%s)]@%s" % [name, to.terrain_set, to.terrain, coords])
-	if fsoil.has_collision != tsoil.has_collision:
-		print("[GroundField.update_terrain]: Collision changed at ", coords, ": ", fsoil.has_collision, " -> ", tsoil.has_collision)
+	_apply_terrain_change(from_soil, to_soil, to, coords)
+	return true
+
+## 土壌の妥当性を検証
+func _are_soils_valid(from_soil: Soil, to_soil: Soil, coords: Vector2i) -> bool:
+	if not is_instance_valid(from_soil) or not is_instance_valid(to_soil):
+		push_warning("[GroundField.update_terrain]: Soil is invalid at ", coords)
+		return false
+	return true
+
+## 地形変更に必要な栄養素を支払えるかチェック
+func _can_afford_terrain_change(from_soil: Soil, to_soil: Soil) -> bool:
+	if not is_instance_valid(to_soil.cost):
+		return true
+
+	var cost: NutrientStorage
+	if not from_soil.cost.is_empty():
+		var back: NutrientStorage = from_soil.cost.duplicate()
+		back.invert()
+		cost = NutrientStorage.merge([back, to_soil.cost])
+	else:
+		cost = to_soil.cost
+	
+	return storage.can_pay(cost)
+
+## 地形の変更を適用
+func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords: Vector2i) -> void:
+	cells_by_soil[from_soil.name].erase(coords)
+	if not cells_by_soil.has(to_soil.name):
+		cells_by_soil[to_soil.name] = []
+	cells_by_soil[to_soil.name].append(coords)
+	soils_changed.emit(from_soil.name, to_soil.name, coords)
+
+	if _tile_dicts.has(coords):
+		for node in _tile_dicts[coords]:
+			if node.has_signal("soil_changed"):
+				node.emit_signal("soil_changed", from_soil.name, to_soil.name)
+
+	
+	if from_soil.has_collision != to_soil.has_collision:
+		print("[GroundField.update_terrain]: Collision changed at ", coords, ": ", from_soil.has_collision, " -> ", to_soil.has_collision)
 		collision_updated.emit.call_deferred()
+	
 	set_cells_terrain_connect([coords], to.terrain_set, to.terrain)
 
 ## 指定した土壌名に対応するTerrain情報を取得する
@@ -128,7 +175,7 @@ func reset():
 ## Nutrientヘルパー関数
 
 func get_nutrient(key: StringName) -> Nutrient:
-	return storage.get_nutrient(nutrition, key)
+	return storage.get_or_add(nutrition, key)
 
 
 # Groundタイル変更時にイベントを受け取りたいノードを追加する

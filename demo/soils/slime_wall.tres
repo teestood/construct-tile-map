@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="Soil" load_steps=7 format=3 uid="uid://cp4woxaatq3g3"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_h2u1c"]
-[ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrition/nutrient.gd" id="1_l0se0"]
+[ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_l0se0"]
 [ext_resource type="Resource" uid="uid://d1kigwmwyrst2" path="res://demo/nutrients/c.tres" id="2_46203"]
-[ext_resource type="Script" uid="uid://8rx24u6h6en4" path="res://demo/nutrient_storage.gd" id="3_25x16"]
+[ext_resource type="Script" uid="uid://8rx24u6h6en4" path="res://addons/living_field/scripts/nutrient/nutrient_storage.gd" id="3_25x16"]
 
 [sub_resource type="Resource" id="Resource_8xqek"]
 script = ExtResource("1_l0se0")

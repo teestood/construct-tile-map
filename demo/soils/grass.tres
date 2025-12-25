@@ -1,9 +1,16 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=2 format=3 uid="uid://ju0f0cxwtxrk"]
+[gd_resource type="Resource" script_class="Soil" load_steps=5 format=3 uid="uid://ju0f0cxwtxrk"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_eysgy"]
+[ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_juyuu"]
+[ext_resource type="Script" uid="uid://8rx24u6h6en4" path="res://addons/living_field/scripts/nutrient/nutrient_storage.gd" id="2_qk5ol"]
+
+[sub_resource type="Resource" id="Resource_7neys"]
+script = ExtResource("2_qk5ol")
+metadata/_custom_type_script = "uid://8rx24u6h6en4"
 
 [resource]
 resource_name = "grass"
 script = ExtResource("1_eysgy")
 name = &"grass"
+cost = SubResource("Resource_7neys")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"
