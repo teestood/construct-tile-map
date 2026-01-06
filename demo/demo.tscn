@@ -1,4 +1,4 @@
-[gd_scene load_steps=69 format=4 uid="uid://euewo1se7sun"]
+[gd_scene load_steps=70 format=4 uid="uid://euewo1se7sun"]
 
 [ext_resource type="Script" uid="uid://bkhtk4hej2bk6" path="res://demo/demo.gd" id="1_qvfii"]
 [ext_resource type="Script" uid="uid://dcrt3bubr0osk" path="res://demo/spawner/plant_spawner.gd" id="2_6ihnu"]
@@ -26,7 +26,7 @@
 [ext_resource type="Resource" uid="uid://d1kigwmwyrst2" path="res://demo/nutrients/c.tres" id="22_a0ng0"]
 [ext_resource type="Script" uid="uid://ddhj0cycr6xwh" path="res://demo/builder.gd" id="22_f73r4"]
 [ext_resource type="Script" uid="uid://fylqmytnns8n" path="res://addons/living_field/utility/directory_resource_preloader.gd" id="22_fla3q"]
-[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_storage_config.gd" id="22_h5sl1"]
+[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="22_h5sl1"]
 [ext_resource type="Resource" uid="uid://btrk8g40xhcq" path="res://demo/nutrients/h.tres" id="23_7h7tp"]
 [ext_resource type="PackedScene" uid="uid://b2wusphwosqwb" path="res://addons/living_field/debug/field_ui.tscn" id="23_qvfii"]
 [ext_resource type="Resource" uid="uid://driu7imf8l6vs" path="res://demo/nutrients/o.tres" id="24_143ej"]
@@ -3169,9 +3169,15 @@ stats = ExtResource("22_a0ng0")
 amount = 200.0
 metadata/_custom_type_script = "uid://dukfighedo7m8"
 
+[sub_resource type="Resource" id="Resource_7eb7w"]
+script = ExtResource("17_7eb7w")
+stats = ExtResource("34_5de16")
+amount = 20.0
+metadata/_custom_type_script = "uid://dukfighedo7m8"
+
 [sub_resource type="Resource" id="Resource_norpd"]
 script = ExtResource("22_h5sl1")
-defaults = Array[ExtResource("17_7eb7w")]([SubResource("Resource_h5sl1")])
+nutrients = Array[ExtResource("17_7eb7w")]([SubResource("Resource_h5sl1"), SubResource("Resource_7eb7w")])
 metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 
 [sub_resource type="Resource" id="Resource_143ej"]
@@ -3275,7 +3281,7 @@ tile_set = SubResource("TileSet_qd5ea")
 navigation_enabled = false
 script = ExtResource("16_norpd")
 nutrition = NodePath("../../NutrientPreloader")
-storage_config = SubResource("Resource_norpd")
+initial_storage = SubResource("Resource_norpd")
 storage = SubResource("Resource_143ej")
 reserve = SubResource("Resource_5de16")
 cells_by_soil = Dictionary[StringName, Array]({

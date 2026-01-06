@@ -2,15 +2,15 @@
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_s16fs"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_ywwlt"]
-[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_storage_config.gd" id="2_ywwlt"]
+[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_2mhd0"]
 
-[sub_resource type="Resource" id="Resource_krwo0"]
-script = ExtResource("2_ywwlt")
+[sub_resource type="Resource" id="Resource_ce7ei"]
+script = ExtResource("3_2mhd0")
 metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 
 [resource]
 resource_name = "dirt"
 script = ExtResource("1_s16fs")
 name = &"dirt"
-cost = SubResource("Resource_krwo0")
+cost = SubResource("Resource_ce7ei")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

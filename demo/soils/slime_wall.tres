@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_h2u1c"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_l0se0"]
 [ext_resource type="Resource" uid="uid://d1kigwmwyrst2" path="res://demo/nutrients/c.tres" id="2_l0se0"]
-[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_storage_config.gd" id="2_rskts"]
+[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_l0se0"]
 
 [sub_resource type="Resource" id="Resource_46203"]
 script = ExtResource("1_l0se0")
@@ -12,8 +12,8 @@ amount = 2.0
 metadata/_custom_type_script = "uid://dukfighedo7m8"
 
 [sub_resource type="Resource" id="Resource_l0se0"]
-script = ExtResource("2_rskts")
-defaults = Array[ExtResource("1_l0se0")]([SubResource("Resource_46203")])
+script = ExtResource("3_l0se0")
+nutrients = Array[ExtResource("1_l0se0")]([SubResource("Resource_46203")])
 metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 
 [resource]

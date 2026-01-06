@@ -1,17 +1,37 @@
 @tool
-class_name NutrientStorage extends Resource
+class_name NutrientStorage extends NutrientContainer
+"""実行時の栄養素プール（辞書ベース）
+
+動的な栄養素の増減、支払い判定を行う。
+高速なルックアップのため辞書構造を使用。"""
 
 signal nutrients_count_changed
 signal nutrient_added
 signal nutrient_changed(key: StringName, amount: float)
 
-
 @export var debug: bool = false
+var nutrients: Dictionary[StringName, Nutrient] = {}
 
 func _init() -> void:
 	resource_local_to_scene = true
 
-@export var nutrients: Dictionary[StringName, Nutrient] = {}
+func get_nutrients() -> Array[Nutrient]:
+	var result: Array[Nutrient] = []
+	result.assign(nutrients.values())
+	return result
+
+func add_nutrient(key: StringName, amount: float) -> void:
+	if not nutrients.has(key):
+		push_warning("[NutrientStorage.add_nutrient]: Nutrient '%s' not found" % key)
+		return
+	
+	nutrients[key].amount += amount
+	
+	if debug:
+		print("[NutrientStorage.add_nutrient]: %s += %d (now: %d)" % [key, amount, nutrients[key].amount])
+	
+	nutrient_changed.emit(key, nutrients[key].amount)
+	emit_changed()
 
 func clear() -> void:
 	nutrients.clear()
@@ -20,71 +40,49 @@ func clear() -> void:
 ## Config からの初期化用内部メソッド（カプセル化）
 func _set_nutrient_internal(key: StringName, nutrient: Nutrient) -> void:
 	nutrients[key] = nutrient
+	if debug:
+		print("[NutrientStorage._set_nutrient_internal]: Set %s = %d" % [key, nutrient.amount])
 
 func get_or_add(nutrition: NutrientPreloader, key: StringName) -> Nutrient:
-	add_nutrient(nutrition.create(key, 0), 0)
+	if not nutrients.has(key):
+		nutrients[key] = nutrition.create(key, 0)
+		nutrient_added.emit(key)
+		nutrients_count_changed.emit()
 	return nutrients[key]
 
 func is_empty() -> bool:
 	return nutrients.size() == 0
 
-func can_pay(cost: NutrientStorage) -> bool:
-	for key in cost.nutrients.keys():
-		var req = cost.nutrients[key]
-		if not nutrients.has(key):
+func can_pay(cost: NutrientContainer) -> bool:
+	for nut in cost.get_nutrients():
+		if not nutrients.has(nut.stats.name):
 			return false
-		if nutrients[key].amount < req.amount:
+		if nutrients[nut.stats.name].amount < nut.amount:
 			return false
 	return true
 
-func sub(cost: NutrientStorage, n: int = 1) -> void:
-	for key in cost.nutrients.keys():
-		var req = cost.nutrients[key]
-		add_nutrient(req, -req.amount * n, false)
-	emit_changed()
+func sub(cost: NutrientContainer, n: float = 1.0) -> void:
+	for nut in cost.get_nutrients():
+		add_nutrient(nut.stats.name, -nut.amount * n)
 
-func add(gain: NutrientStorage, n: int = 1) -> void:
-	for key in gain.nutrients.keys():
-		var req = gain.nutrients[key]
-		add_nutrient(req, req.amount * n, false)
-	emit_changed()
+func add(gain: NutrientContainer, n: float = 1.0) -> void:
+	for nut in gain.get_nutrients():
+		add_nutrient(nut.stats.name, nut.amount * n)
 
-func merge_storages(storages: Array[NutrientStorage]) -> void:
-	var logs: PackedStringArray = []
+## NutrientAmountをStorageに直接追加
+func add_amount(amount: NutrientAmount, multiplier: float = 1.0) -> void:
+	amount.apply_to(self, multiplier)
+
+func merge_storages(storages: Array) -> void:
 	if debug:
-		print("[NutrientStorage.merge_storages]: Merge ", storages)
+		print("[NutrientStorage.merge_storages]: Merging ", storages.size(), " storages")
 	
 	for storage in storages:
-		for key in storage.nutrients.keys():
-			var nut = storage.nutrients[key]
-			add_nutrient(nut, nut.amount, false)
-			logs.append(" %s: %+d" % [key, nut.amount])
-	
-	if debug and 0 < logs.size():
-		print("[NutrientStorage.merge_storages]: Merged storages:", ", ".join(logs))
-	
-	emit_changed()
+		if storage is NutrientContainer:
+			add_container(storage)
+		else:
+			push_warning("[NutrientStorage.merge_storages]: Invalid storage type")
 
-## ある栄養素の量をamount分追加させる
-func add_nutrient(nut: Nutrient, amount: float, _emit: bool = true) -> float:
-	if not nutrients.has(nut.stats.name):
-		nutrients[nut.stats.name] = nut.duplicate()
-		nutrient_added.emit(nut.stats.name)
-		nutrients_count_changed.emit()
-	else:
-		nutrients[nut.stats.name].amount += amount
-
-	var new_amount = nutrients[nut.stats.name].amount
-	
-	if debug:
-		print("[NutrientStorage.add_nutrient]: %s amount changed to %d" % [nut.stats.name, new_amount])
-	
-	nutrient_changed.emit(nut.stats.name, new_amount)
-	
-	if _emit:
-		emit_changed()
-	
-	return new_amount
 
 func clone() -> NutrientStorage:
 	var newstorage := NutrientStorage.new()
@@ -92,26 +90,30 @@ func clone() -> NutrientStorage:
 		newstorage.nutrients[key] = nutrients[key].duplicate()
 	return newstorage
 
-func _to_string() -> String:
-	if nutrients.is_empty():
-		return "NutrientStorage{empty}"
-	var parts: Array[String] = []
-	for key in nutrients.keys():
-		var nut = nutrients[key]
-		parts.append("%s: %d" % [key, nut.amount])
-	return "NutrientStorage{%s}" % ", ".join(parts)
 
-
-static func merge(storages: Array[NutrientStorage]) -> NutrientStorage:
-	var newstorage := NutrientStorage.new()
-	for storage in storages:
-		for key in storage.nutrients.keys():
-			var nut = storage.nutrients[key]
-			if not newstorage.nutrients.has(key):
-				newstorage.nutrients[key] = nut.duplicate()
+## 複数のNutrientContainerをマージして新しいStorageを作成
+static func merge(containers: Array) -> NutrientStorage:
+	var result = NutrientStorage.new()
+	var nutrient_sums: Dictionary = {}
+	
+	for container in containers:
+		if container == null:
+			continue
+		if not container is NutrientContainer:
+			push_warning("[NutrientStorage.merge]: Invalid container type")
+			continue
+		
+		for nut in container.get_nutrients():
+			var key = nut.stats.name
+			if not nutrient_sums.has(key):
+				nutrient_sums[key] = nut.duplicate()
 			else:
-				newstorage.nutrients[key].amount += nut.amount
-	return newstorage
+				nutrient_sums[key].amount += nut.amount
+	
+	for key in nutrient_sums:
+		result._set_nutrient_internal(key, nutrient_sums[key])
+	
+	return result
 
 static func invert(storage: NutrientStorage) -> NutrientStorage:
 	var inverted = storage.clone()
