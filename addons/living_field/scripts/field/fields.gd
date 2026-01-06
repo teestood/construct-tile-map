@@ -8,8 +8,6 @@ class_name Fields extends Node2D
 
 @onready var plans_container: Node2D = %Plans
 
-var grounds: Array[GroundField] = []
-
 var _is_instance_updated = true
 signal instance_updated()
 
@@ -21,8 +19,6 @@ func _ready() -> void:
 	for child in get_children():
 		if child is GroundField:
 			var ground := child as GroundField
-			grounds.append(ground)
-
 			ground.collision_updated.connect(set.bind(&"_is_instance_updated", true), CONNECT_DEFERRED)
 	
 	reset()
@@ -31,7 +27,6 @@ func _process(_delta: float) -> void:
 	if Engine.is_editor_hint():
 		return
 	if _is_instance_updated:
-		print("Fields: Instance Updated")
 		instance_updated.emit()
 		_is_instance_updated = false
 

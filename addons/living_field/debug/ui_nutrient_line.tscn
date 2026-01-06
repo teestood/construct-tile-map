@@ -8,6 +8,14 @@ script = ExtResource("1_en8x2")
 [node name="Title" type="Label" parent="."]
 layout_mode = 2
 
+[node name="Reserve" type="Label" parent="."]
+layout_mode = 2
+text = "???"
+
+[node name="_" type="Label" parent="."]
+layout_mode = 2
+text = "/"
+
 [node name="Quantity" type="SpinBox" parent="."]
 layout_mode = 2
 max_value = 99999.0

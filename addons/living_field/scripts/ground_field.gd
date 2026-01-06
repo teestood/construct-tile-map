@@ -16,20 +16,21 @@ var _setup_node_action = func():
 @warning_ignore("unused_private_class_variable")
 var _recalc_soils_action = recalc_soils
 
-
 #signal built
 signal soils_changed(from: StringName, to: StringName, coords: Vector2i)
 signal collision_updated()
 
+@export var debug: bool = false
 @export var challenge_rate = .1
 @export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
 @export var nutrition: NutrientPreloader # 栄養素
+@export var storage_config: NutrientStorageConfig # 栄養素ストレージ設定
 @export var storage: NutrientStorage
 @export var reserve: NutrientStorage # storageの内、タイル分の栄養素を表す
-@export var cells_by_soil: Dictionary[StringName, Array] = {}
+@export_storage var cells_by_soil: Dictionary[StringName, Array] = {}
 
 @onready var timer: Timer = $Timer
-@onready var resources: ResourcePreloader = $SoilPreloader
+@onready var soil_preloader: ResourcePreloader = $SoilPreloader
 var _start_map_data: PackedByteArray
 var _fctx: FieldContext
 var _terrain_cache: Dictionary[StringName, PackedInt32Array] = {}
@@ -46,7 +47,6 @@ func _ready() -> void:
 	_start_map_data = tile_map_data
 
 	_fctx = FieldContext.create(nutrition, cells_by_soil)
-	storage.initialize()
 
 func recalc_soils():
 	cells_by_soil = {}
@@ -60,8 +60,29 @@ func recalc_soils():
 			cells_by_soil[soil.name] = l
 		cells_by_soil[soil.name].append(coords)
 
+func recalc_reserve():
+	if storage_config == null:
+		push_error("[GroundField.recalc_reserve]: storage_config is not set")
+		return
 	
+	reserve.clear()
+	storage_config.apply_nutrition(reserve, nutrition)
+	for key in cells_by_soil.keys():
+		var soil = soil_preloader.get_resource(key)
+		if soil.cost == null:
+			continue
+		var l = len(cells_by_soil[key])
+		reserve.add(soil.cost.create(), l)
+
 func initialize():
+	if storage_config == null:
+		push_error("[GroundField.initialize]: storage_config is not set")
+		return
+	
+	storage.clear()
+	storage_config.apply_nutrition(storage, nutrition)
+	storage_config.apply_defaults(storage)
+	recalc_reserve()
 	timer.start(challenge_rate)
 
 
@@ -118,12 +139,11 @@ func _can_afford_terrain_change(from_soil: Soil, to_soil: Soil) -> bool:
 		return true
 
 	var cost: NutrientStorage
-	if not from_soil.cost.is_empty():
-		var back: NutrientStorage = from_soil.cost.duplicate()
-		back.invert()
-		cost = NutrientStorage.merge([back, to_soil.cost])
+	if from_soil.cost != null:
+		var back := from_soil.cost.invert()
+		cost = NutrientStorage.merge([back, to_soil.cost.create()])
 	else:
-		cost = to_soil.cost
+		cost = to_soil.cost.create()
 	
 	return storage.can_pay(cost)
 
@@ -135,6 +155,16 @@ func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords:
 	cells_by_soil[to_soil.name].append(coords)
 	soils_changed.emit(from_soil.name, to_soil.name, coords)
 
+	if debug:
+		print("[GroundField.update_terrain]: Paying cost for terrain change at ", coords)
+	var l: Array[NutrientStorage] = []
+	if from_soil.cost != null:
+		l.append(from_soil.cost.invert())
+	if to_soil.cost != null:
+		l.append(to_soil.cost.create())
+
+	reserve.merge_storages(l)
+
 	if _tile_dicts.has(coords):
 		for node in _tile_dicts[coords]:
 			if node.has_signal("soil_changed"):
@@ -142,7 +172,8 @@ func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords:
 
 	
 	if from_soil.has_collision != to_soil.has_collision:
-		print("[GroundField.update_terrain]: Collision changed at ", coords, ": ", from_soil.has_collision, " -> ", to_soil.has_collision)
+		if debug:
+			print("[GroundField.update_terrain]: Collision changed at ", coords, ": ", from_soil.has_collision, " -> ", to_soil.has_collision)
 		collision_updated.emit.call_deferred()
 	
 	set_cells_terrain_connect([coords], to.terrain_set, to.terrain)
@@ -176,6 +207,8 @@ func reset():
 
 func get_nutrient(key: StringName) -> Nutrient:
 	return storage.get_or_add(nutrition, key)
+func get_reserve(key: StringName) -> Nutrient:
+	return reserve.get_or_add(nutrition, key)
 
 
 # Groundタイル変更時にイベントを受け取りたいノードを追加する

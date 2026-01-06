@@ -1,30 +1,16 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=8 format=3 uid="uid://4mih1xvrbamo"]
+[gd_resource type="Resource" script_class="Soil" load_steps=5 format=3 uid="uid://4mih1xvrbamo"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_s16fs"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_ywwlt"]
-[ext_resource type="Script" uid="uid://nxht2nqbbw0o" path="res://addons/living_field/scripts/nutrient/nutrient_stats.gd" id="2_2mhd0"]
-[ext_resource type="Script" uid="uid://8rx24u6h6en4" path="res://addons/living_field/scripts/nutrient/nutrient_storage.gd" id="2_krwo0"]
+[ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_storage_config.gd" id="2_ywwlt"]
 
 [sub_resource type="Resource" id="Resource_krwo0"]
-resource_name = "S"
-script = ExtResource("2_2mhd0")
-name = &"S"
-full_name = &"Sarasara"
-metadata/_custom_type_script = "uid://nxht2nqbbw0o"
-
-[sub_resource type="Resource" id="Resource_2mhd0"]
-script = ExtResource("1_ywwlt")
-stats = SubResource("Resource_krwo0")
-metadata/_custom_type_script = "uid://dukfighedo7m8"
-
-[sub_resource type="Resource" id="Resource_tfw6o"]
-script = ExtResource("2_krwo0")
-_defaults = Array[ExtResource("1_ywwlt")]([SubResource("Resource_2mhd0")])
-metadata/_custom_type_script = "uid://8rx24u6h6en4"
+script = ExtResource("2_ywwlt")
+metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 
 [resource]
 resource_name = "dirt"
 script = ExtResource("1_s16fs")
 name = &"dirt"
-cost = SubResource("Resource_tfw6o")
+cost = SubResource("Resource_krwo0")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

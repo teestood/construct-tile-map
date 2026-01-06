@@ -53,6 +53,7 @@ func _physics_process(_delta: float) -> void:
 
 	sprite.flip_h =  0 < linear_velocity.x
 
+## 計画地形を適用する建設作業を実行する
 func _build_tile():
 	# 建設予定地内のオブジェクトをどかせる
 	var target_pos = plan.map_to_global(target_coords)
@@ -85,6 +86,6 @@ func _on_timer_timeout() -> void:
 	if l == 0:
 		return
 	target_coords = plan.progress_cells[randi_range(0, l-1)]
-	print("destination: ", plan.map_to_global(target_coords), ":@", target_coords)
+	print("[Worker] destination: ", plan.map_to_global(target_coords), ":@", target_coords)
 	agent.target_position = plan.map_to_global(target_coords)
 	state = Worker.State.MOVE

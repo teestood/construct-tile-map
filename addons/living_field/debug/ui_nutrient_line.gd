@@ -5,6 +5,7 @@ const DefaultScene = preload("res://addons/living_field/debug/ui_nutrient_line.t
 
 @onready var ui_title: Label = $Title
 @onready var ui_quantity: SpinBox = $Quantity
+@onready var ui_reserve: Label = $Reserve
 
 func set_quantity(val: float):
 	if ui_quantity.value == val:
@@ -12,9 +13,10 @@ func set_quantity(val: float):
 
 	ui_quantity.value = val
 
-static func instantiate(nut: Nutrient) -> UINutrientLine:
+static func instantiate(nut: Nutrient, reserve: Nutrient) -> UINutrientLine:
 	var ui_nutrient :UINutrientLine = DefaultScene.instantiate()
 	ui_nutrient.get_node("Title").text = nut.stats.name + ":"
+
 	var ui_quantity: SpinBox = ui_nutrient.get_node("Quantity")
 	ui_quantity.value = nut.amount
 	ui_quantity.value_changed.connect(func(val):
@@ -22,6 +24,11 @@ static func instantiate(nut: Nutrient) -> UINutrientLine:
 			return
 		nut.amount = val
 	)
-	nut.quantity_changed.connect(ui_quantity.set_value_no_signal)
+
+	var ui_reserve: Label = ui_nutrient.get_node("Reserve")
+	ui_reserve.text = str(reserve.amount)
+	reserve.quantity_changed.connect(func(val):
+		ui_reserve.text = str(val)
+	)
 
 	return ui_nutrient

@@ -17,6 +17,11 @@ var _soil_dicts: Dictionary[StringName, Label] = {}
 func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
+	if target_field == null:
+		queue_free()
+		return
+	if not target_field.is_node_ready():
+		await target_field.ready
 	_refresh()
 
 
@@ -27,7 +32,7 @@ func _refresh():
 	var nutrients = target_field.storage.nutrients
 	for key in nutrients.keys():
 		var nut = nutrients[key]
-		var ui_line = UINutrientLine.instantiate(nut)
+		var ui_line = UINutrientLine.instantiate(nut, target_field.get_reserve(nut.stats.name))
 		ui_nutrients.add_child(ui_line)
 
 		if Engine.is_editor_hint():
@@ -50,10 +55,24 @@ func _refresh():
 		target_field.soils_changed.connect(_on_GroundField_soils_changed)
 		
 		target_field.storage.nutrient_added.connect(func(key):
-			var ui_line = UINutrientLine.instantiate(target_field.get_nutrient(key))
+			var ui_line = UINutrientLine.instantiate(target_field.get_nutrient(key), target_field.get_reserve(key))
 			ui_nutrients.add_child(ui_line)
 			ui_line.name = key 
 		)
+		
+		target_field.storage.nutrient_changed.connect(_on_Nutrient_changed.bind(false))
+		target_field.reserve.nutrient_changed.connect(_on_Nutrient_changed.bind(true))
+
+func _on_Nutrient_changed(key: StringName, amount: float, is_reserve: bool):
+	if is_reserve:
+		var ui_reserve: Label = ui_nutrients.get_node_or_null(key + "/Reserve")
+		if ui_reserve != null:
+			ui_reserve.text = str(amount)
+	else:
+		var ui_quantity: SpinBox = ui_nutrients.get_node_or_null(key + "/Quantity")
+		if ui_quantity != null:
+			_on_Nutrient_quantity_changed(ui_quantity, amount)
+
 
 
 func _on_GroundField_soils_changed(from: StringName, to: StringName, _coords: Vector2i):

@@ -8,7 +8,6 @@ extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	field.instance_updated.connect(func():
-		print("INSTANCE UPDATE")
 		region.bake_navigation_polygon()
 	)
 

@@ -10,6 +10,9 @@ var advance_build_action = advance_build
 
 @export var ground: GroundField 
 @export var default_tile: int = -1
+@export_group("Debug")
+@export var debug: bool = false
+@export_group("")
 
 var _progress_cells: Array[Vector2i] = []
 var progress_cells: Array[Vector2i]:
@@ -28,12 +31,23 @@ func _ready() -> void:
 	_update_progress_cells()
 
 func _update_progress_cells():
+	if debug:
+		print("ConstructPlan: UpdateProgressCells")
 	_progress_cells = []
 	var cells = get_used_cells()
+	var invalid_cells: Array[Vector2i] = []
 	for coords in cells:
-		if is_planned_tile(coords):
+		if ground.get_cell_source_id(coords) == -1:
+			invalid_cells.append(coords)
+			continue ## 
+		if is_built_tile(coords):
 			continue
 		_progress_cells.append(coords)
+	if 0 < invalid_cells.size():
+		push_warning("ground has not tile at: ", invalid_cells)
+
+	if debug:
+		print("ConstructPlan: UpdateProgressCells finished")
 
 ## Checks if construction can be started. Returns true if construction can be started.
 func can_construct() -> bool:
@@ -50,6 +64,8 @@ func can_construct() -> bool:
 
 ## 即座に完成図を建築に適用する
 func instant_construct():
+	if debug:
+		print("ConstructPlan: InstantConstruct")
 	var cells = get_used_cells()
 
 	var terrain_cells: Dictionary[PackedInt32Array, Array]
@@ -64,6 +80,9 @@ func instant_construct():
 	
 	for key in terrain_cells.keys():
 		ground.set_cells_terrain_connect(terrain_cells[key], key[0], key[1])
+
+	if debug:
+		print("ConstructPlan: InstantConstruct finished")
 
 func advance_build() -> bool:
 	if _progress_cells.size() == 0:
@@ -97,8 +116,14 @@ func apply_to_ground(coords: Vector2i) -> Soil:
 
 	return Soil.from_tiledata(to)
 
-func is_planned_tile(coords: Vector2i):
-	return get_cell_source_id(coords) == ground.get_cell_source_id(coords) and \
+## 建築完了しているかどうかを判定する
+func is_built_tile(coords: Vector2i) -> bool:
+	return get_cell_source_id(coords) == ground.get_cell_source_id(coords)
+
+## 期待したタイルかどうかを判定する
+## 建築完了していてかつ周囲のタイルも同じである場合にtrueを返す
+func is_planned_tile(coords: Vector2i) -> bool:
+	return is_built_tile(coords) and \
 		get_cell_atlas_coords(coords) == ground.get_cell_atlas_coords(coords)
 
 func map_to_global(coords: Vector2i) -> Vector2:

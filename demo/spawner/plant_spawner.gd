@@ -12,7 +12,7 @@ signal instantiated(node: Node2D)
 
 @onready var timer: Timer = $Timer
 
-
+## Spawn済みのplant管理用
 var exists: Dictionary[Vector2i, Node] = {}
 
 # Called when the node enters the scene tree for the first time.
@@ -37,7 +37,7 @@ func queue(req: PlantSpawnRequest) -> bool:
 	queued.emit(req)
 	return true
 
-# accept_spawn called when queued signal is processed and node is instantiated
+## accept_spawn called when queued signal is processed and node is instantiated
 func accept_spawn(node: Plant):
 	plants.append(node)
 	node.tree_exited.connect(func():
