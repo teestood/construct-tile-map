@@ -200,10 +200,10 @@ func reset():
 
 ## Nutrientヘルパー関数
 
-func get_nutrient(key: StringName) -> Nutrient:
-	return capacity.get_or_add(nutrition, key)
-func get_reserve(key: StringName) -> Nutrient:
-	return storage.get_or_add(nutrition, key)
+func get_capacity(key: StringName) -> Nutrient:
+	return capacity.get_nutrient(key)
+func get_amount(key: StringName) -> Nutrient:
+	return storage.get_nutrient(key)
 
 
 # Groundタイル変更時にイベントを受け取りたいノードを追加する

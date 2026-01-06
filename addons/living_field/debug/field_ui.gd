@@ -12,6 +12,7 @@ var _refresh_action = _refresh
 @onready var ui_speed: Label = %Speed
 
 var _soil_dicts: Dictionary[StringName, Label] = {}
+var _signals_connected: bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,7 +33,7 @@ func _refresh():
 	var nutrients = target_field.capacity.nutrients
 	for key in nutrients.keys():
 		var nut = nutrients[key]
-		var ui_line = UINutrientLine.instantiate(nut, target_field.get_reserve(nut.stats.name))
+		var ui_line = UINutrientLine.instantiate(nut, target_field.get_amount(nut.stats.name))
 		ui_nutrients.add_child(ui_line)
 
 		if Engine.is_editor_hint():
@@ -51,11 +52,12 @@ func _refresh():
 		if Engine.is_editor_hint():
 			_fill_owner(ui_soilline, get_tree().edited_scene_root)
 
-	if not Engine.is_editor_hint():
+	if not Engine.is_editor_hint() and not _signals_connected:
+		_signals_connected = true
 		target_field.soils_changed.connect(_on_GroundField_soils_changed)
 		
 		target_field.capacity.nutrient_added.connect(func(key):
-			var ui_line = UINutrientLine.instantiate(target_field.get_nutrient(key), target_field.get_reserve(key))
+			var ui_line = UINutrientLine.instantiate(target_field.get_capacity(key), target_field.get_amount(key))
 			ui_nutrients.add_child(ui_line)
 			ui_line.name = key 
 		)
@@ -78,7 +80,10 @@ func _on_Nutrient_changed(key: StringName, amount: float, is_storage: bool):
 
 func _on_GroundField_soils_changed(from: StringName, to: StringName, _coords: Vector2i):
 	print("SOIL CHANGED:", from, "->", to)
-	_soil_dicts[from].text = str(len(target_field.cells_by_soil[from]))
+	
+	# from が _soil_dicts に存在する場合のみ更新
+	if _soil_dicts.has(from):
+		_soil_dicts[from].text = str(len(target_field.cells_by_soil[from]))
 	if not _soil_dicts.has(to):
 		var ui_tileline = UISoilLine.instantiate(to, len(target_field.cells_by_soil[to]))
 		ui_soils.add_child(ui_tileline)
@@ -93,6 +98,20 @@ func _on_Nutrient_quantity_changed(ui_capacity: SpinBox, val: float):
 	if ui_capacity.value == val:
 		return
 	ui_capacity.value = val 
+
+
+func _exit_tree() -> void:
+	if Engine.is_editor_hint() or not _signals_connected:
+		return
+	# 信号を安全に切断
+	if target_field:
+		if target_field.soils_changed.is_connected(_on_GroundField_soils_changed):
+			target_field.soils_changed.disconnect(_on_GroundField_soils_changed)
+		if target_field.capacity.nutrient_changed.is_connected(_on_Nutrient_changed):
+			target_field.capacity.nutrient_changed.disconnect(_on_Nutrient_changed)
+		if target_field.storage.nutrient_changed.is_connected(_on_Nutrient_changed):
+			target_field.storage.nutrient_changed.disconnect(_on_Nutrient_changed)
+
 
 static func _clear_children(node: Node):
 	if not is_instance_valid(node):

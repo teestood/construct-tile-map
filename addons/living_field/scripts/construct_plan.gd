@@ -49,17 +49,18 @@ func _update_progress_cells():
 	if debug:
 		print("ConstructPlan: UpdateProgressCells finished")
 
-## Checks if construction can be started. Returns true if construction can be started.
+## Checks if construction can be started. Returns true if at least one buildable tile exists.
 func can_construct() -> bool:
 	var cells = get_used_cells()
 	for coords in cells:
-		if get_cell_source_id(coords) != -1:
+		if get_cell_source_id(coords) == -1:
 			continue
 		var tiledata = get_cell_tile_data(coords)
-		var parts = tiledata.get_custom_data("Soil")
-		if parts == null:
+		if tiledata == null:
 			continue
-
+		var soil = tiledata.get_custom_data("Soil")
+		if soil != null and ground.storage.can_pay(soil.cost):
+			return true
 	return false
 
 ## 即座に完成図を建築に適用する
