@@ -7,6 +7,7 @@ class_name NutrientStats extends Resource
 		resource_name = _make_string()
 
 @export var full_name: StringName = "unknown"
+@export var color: Color = Color.WHITE
 
 func _to_string() -> String:
 	resource_name = _make_string()

@@ -24,9 +24,10 @@ signal collision_updated()
 @export var challenge_rate = .1
 @export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
 @export var nutrition: NutrientPreloader # 栄養素
+@export var initial_capacity: NutrientAmount # 初期栄養素
+@export var capacity: NutrientStorage
 @export var initial_storage: NutrientAmount # 初期栄養素
-@export var storage: NutrientStorage
-@export var reserve: NutrientStorage # storageの内、タイル分の栄養素を表す
+@export var storage: NutrientStorage # storageの内、タイル分の栄養素を表す
 @export_storage var cells_by_soil: Dictionary[StringName, Array] = {}
 
 @onready var timer: Timer = $Timer
@@ -60,25 +61,9 @@ func recalc_soils():
 			cells_by_soil[soil.name] = l
 		cells_by_soil[soil.name].append(coords)
 
-func recalc_reserve():
-	reserve.clear()
-	# nutrition プリローダーから栄養素の種類を初期化
-	if nutrition != null:
-		for key in nutrition.get_resource_list():
-			reserve._set_nutrient_internal(key, nutrition.create(key, 0))
-	
-	# 各土壌タイルのコストを計算
-	for key in cells_by_soil.keys():
-		var soil = soil_preloader.get_resource(key)
-		if soil.cost == null:
-			continue
-		var tile_count = len(cells_by_soil[key])
-		soil.cost.apply_to(reserve, tile_count)
-	
-	reserve.emit_changed()
-
-func initialize():
+func setup_storage(storage: NutrientStorage, initial: NutrientAmount):
 	storage.clear()
+
 	# nutrition プリローダーから栄養素の種類を初期化
 	if nutrition != null:
 		for key in nutrition.get_resource_list():
@@ -87,9 +72,22 @@ func initialize():
 	# 初期栄養素を設定
 	if initial_storage != null:
 		initial_storage.apply_to(storage)
+
+func initialize():
+	setup_storage(capacity, initial_capacity)
+	setup_storage(storage, initial_storage)
+
+	# 各土壌タイルのコストを計算
+	for key in cells_by_soil.keys():
+		var soil = soil_preloader.get_resource(key)
+		if soil.cost == null:
+			continue
+		var tile_count = len(cells_by_soil[key])
+		soil.cost.apply_to(capacity, tile_count)
 	
 	storage.emit_changed()
-	recalc_reserve()
+	capacity.emit_changed()
+
 	timer.start(challenge_rate)
 
 
@@ -151,7 +149,7 @@ func _can_afford_terrain_change(from_soil: Soil, to_soil: Soil) -> bool:
 	else:
 		cost = to_soil.cost.create()
 	
-	return storage.can_pay(cost)
+	return capacity.can_pay(cost)
 
 ## 地形の変更を適用
 func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords: Vector2i) -> void:
@@ -164,9 +162,9 @@ func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords:
 
 	# 統一されたインターフェースで栄養素を更新（配列作成不要）
 	if from_soil.cost != null:
-		reserve.sub_container(from_soil.cost)
+		capacity.sub_container(from_soil.cost)
 	if to_soil.cost != null:
-		reserve.add_container(to_soil.cost)
+		capacity.add_container(to_soil.cost)
 
 	# タイルリスナーへの通知
 	if _tile_dicts.has(coords):
@@ -210,9 +208,9 @@ func reset():
 ## Nutrientヘルパー関数
 
 func get_nutrient(key: StringName) -> Nutrient:
-	return storage.get_or_add(nutrition, key)
+	return capacity.get_or_add(nutrition, key)
 func get_reserve(key: StringName) -> Nutrient:
-	return reserve.get_or_add(nutrition, key)
+	return storage.get_or_add(nutrition, key)
 
 
 # Groundタイル変更時にイベントを受け取りたいノードを追加する

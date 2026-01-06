@@ -7,4 +7,5 @@ resource_name = "c"
 script = ExtResource("2_sjpon")
 name = &"c"
 full_name = &"Coricori"
+color = Color(0.86, 0.25456, 0.03440002, 1)
 metadata/_custom_type_script = "uid://nxht2nqbbw0o"

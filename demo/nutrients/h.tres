@@ -7,4 +7,5 @@ resource_name = "h"
 script = ExtResource("2_156on")
 name = &"h"
 full_name = &"Huwahuwa"
+color = Color(0.324, 0.6012, 0.72, 1)
 metadata/_custom_type_script = "uid://nxht2nqbbw0o"

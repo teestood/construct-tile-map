@@ -29,7 +29,7 @@ func _refresh():
 	ui_speed.text = str(1. / target_field.challenge_rate)
 	_clear_children(ui_nutrients)
 
-	var nutrients = target_field.storage.nutrients
+	var nutrients = target_field.capacity.nutrients
 	for key in nutrients.keys():
 		var nut = nutrients[key]
 		var ui_line = UINutrientLine.instantiate(nut, target_field.get_reserve(nut.stats.name))
@@ -54,24 +54,24 @@ func _refresh():
 	if not Engine.is_editor_hint():
 		target_field.soils_changed.connect(_on_GroundField_soils_changed)
 		
-		target_field.storage.nutrient_added.connect(func(key):
+		target_field.capacity.nutrient_added.connect(func(key):
 			var ui_line = UINutrientLine.instantiate(target_field.get_nutrient(key), target_field.get_reserve(key))
 			ui_nutrients.add_child(ui_line)
 			ui_line.name = key 
 		)
 		
-		target_field.storage.nutrient_changed.connect(_on_Nutrient_changed.bind(false))
-		target_field.reserve.nutrient_changed.connect(_on_Nutrient_changed.bind(true))
+		target_field.capacity.nutrient_changed.connect(_on_Nutrient_changed.bind(false))
+		target_field.storage.nutrient_changed.connect(_on_Nutrient_changed.bind(true))
 
-func _on_Nutrient_changed(key: StringName, amount: float, is_reserve: bool):
-	if is_reserve:
-		var ui_reserve: Label = ui_nutrients.get_node_or_null(key + "/Reserve")
-		if ui_reserve != null:
-			ui_reserve.text = str(amount)
+func _on_Nutrient_changed(key: StringName, amount: float, is_storage: bool):
+	if is_storage:
+		var ui_storage: Label = ui_nutrients.get_node_or_null(key + "/Reserve")
+		if ui_storage != null:
+			ui_storage.text = str(amount)
 	else:
-		var ui_quantity: SpinBox = ui_nutrients.get_node_or_null(key + "/Quantity")
-		if ui_quantity != null:
-			_on_Nutrient_quantity_changed(ui_quantity, amount)
+		var ui_capacity: SpinBox = ui_nutrients.get_node_or_null(key + "/Quantity")
+		if ui_capacity != null:
+			_on_Nutrient_quantity_changed(ui_capacity, amount)
 
 
 
@@ -88,10 +88,10 @@ func _on_GroundField_soils_changed(from: StringName, to: StringName, _coords: Ve
 	_soil_dicts[to].text = str(len(target_field.cells_by_soil[to]))
 
 
-func _on_Nutrient_quantity_changed(ui_quantity: SpinBox, val: float):
-	if ui_quantity.value == val:
+func _on_Nutrient_quantity_changed(ui_capacity: SpinBox, val: float):
+	if ui_capacity.value == val:
 		return
-	ui_quantity.value = val 
+	ui_capacity.value = val 
 
 static func _clear_children(node: Node):
 	if not is_instance_valid(node):
