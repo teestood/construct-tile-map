@@ -64,12 +64,13 @@ func _refresh():
 		target_field.storage.nutrient_changed.connect(_on_Nutrient_changed.bind(true))
 
 func _on_Nutrient_changed(key: StringName, amount: float, is_storage: bool):
+	print(("[NutrientChanged][Storage]" if is_storage else "[NutrientChanged][Capacity]") + ": %s = %d" % [key, amount])
 	if is_storage:
-		var ui_storage: Label = ui_nutrients.get_node_or_null(key + "/Reserve")
+		var ui_storage: SpinBox = ui_nutrients.get_node_or_null(key + "/Amount")
 		if ui_storage != null:
-			ui_storage.text = str(amount)
+			_on_Nutrient_quantity_changed(ui_storage, amount)
 	else:
-		var ui_capacity: SpinBox = ui_nutrients.get_node_or_null(key + "/Quantity")
+		var ui_capacity: SpinBox = ui_nutrients.get_node_or_null(key + "/Capacity")
 		if ui_capacity != null:
 			_on_Nutrient_quantity_changed(ui_capacity, amount)
 

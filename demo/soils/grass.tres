@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=7 format=3 uid="uid://ju0f0cxwtxrk"]
+[gd_resource type="Resource" script_class="Soil" load_steps=10 format=3 uid="uid://ju0f0cxwtxrk"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_eysgy"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_juyuu"]
 [ext_resource type="Resource" uid="uid://d1kigwmwyrst2" path="res://demo/nutrients/c.tres" id="2_qk5ol"]
+[ext_resource type="Resource" uid="uid://driu7imf8l6vs" path="res://demo/nutrients/o.tres" id="3_7neys"]
 [ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_qk5ol"]
 
 [sub_resource type="Resource" id="Resource_7neys"]
@@ -11,7 +12,18 @@ stats = ExtResource("2_qk5ol")
 amount = 1.0
 metadata/_custom_type_script = "uid://dukfighedo7m8"
 
+[sub_resource type="Resource" id="Resource_fu1fm"]
+script = ExtResource("1_juyuu")
+stats = ExtResource("3_7neys")
+amount = 1.0
+metadata/_custom_type_script = "uid://dukfighedo7m8"
+
 [sub_resource type="Resource" id="Resource_qk5ol"]
+script = ExtResource("3_qk5ol")
+nutrients = Array[ExtResource("1_juyuu")]([SubResource("Resource_7neys"), SubResource("Resource_fu1fm")])
+metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
+
+[sub_resource type="Resource" id="Resource_83yq7"]
 script = ExtResource("3_qk5ol")
 nutrients = Array[ExtResource("1_juyuu")]([SubResource("Resource_7neys")])
 metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
@@ -20,5 +32,6 @@ metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 resource_name = "grass"
 script = ExtResource("1_eysgy")
 name = &"grass"
-cost = SubResource("Resource_qk5ol")
+capacity = SubResource("Resource_qk5ol")
+cost = SubResource("Resource_83yq7")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

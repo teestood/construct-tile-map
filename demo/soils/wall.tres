@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=7 format=3 uid="uid://b2naxlvdloysf"]
+[gd_resource type="Resource" script_class="Soil" load_steps=9 format=3 uid="uid://b2naxlvdloysf"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_qmxpg"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_u1k5l"]
@@ -8,7 +8,7 @@
 [sub_resource type="Resource" id="Resource_2db44"]
 script = ExtResource("1_u1k5l")
 stats = ExtResource("2_seh00")
-amount = 2.0
+amount = 3.0
 metadata/_custom_type_script = "uid://dukfighedo7m8"
 
 [sub_resource type="Resource" id="Resource_ob4qn"]
@@ -16,10 +16,22 @@ script = ExtResource("3_seh00")
 nutrients = Array[ExtResource("1_u1k5l")]([SubResource("Resource_2db44")])
 metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 
+[sub_resource type="Resource" id="Resource_gbbmb"]
+script = ExtResource("1_u1k5l")
+stats = ExtResource("2_seh00")
+amount = 1.0
+metadata/_custom_type_script = "uid://dukfighedo7m8"
+
+[sub_resource type="Resource" id="Resource_seh00"]
+script = ExtResource("3_seh00")
+nutrients = Array[ExtResource("1_u1k5l")]([SubResource("Resource_gbbmb")])
+metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
+
 [resource]
 resource_name = "wall"
 script = ExtResource("1_qmxpg")
 name = &"wall"
-cost = SubResource("Resource_ob4qn")
+capacity = SubResource("Resource_ob4qn")
+cost = SubResource("Resource_seh00")
 has_collision = true
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

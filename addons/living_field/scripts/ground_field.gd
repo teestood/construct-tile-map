@@ -23,9 +23,9 @@ signal collision_updated()
 @export var debug: bool = false
 @export var challenge_rate = .1
 @export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
-@export var nutrition: NutrientPreloader # 栄養素
-@export var initial_capacity: NutrientAmount # 初期栄養素
-@export var capacity: NutrientStorage
+@export var nutrition: NutrientPreloader  # 最大栄養素量、initial_capacityに加え、土壌状態に影響される
+@export var initial_capacity: NutrientAmount # 初期最大栄養素量
+@export var capacity: NutrientStorage# 栄養素
 @export var initial_storage: NutrientAmount # 初期栄養素
 @export var storage: NutrientStorage # storageの内、タイル分の栄養素を表す
 @export_storage var cells_by_soil: Dictionary[StringName, Array] = {}
@@ -49,6 +49,7 @@ func _ready() -> void:
 
 	_fctx = FieldContext.create(nutrition, cells_by_soil)
 
+## Soilの座標リストの統計を再計算する
 func recalc_soils():
 	cells_by_soil = {}
 	for coords in get_used_cells():
@@ -70,8 +71,8 @@ func setup_storage(storage: NutrientStorage, initial: NutrientAmount):
 			storage._set_nutrient_internal(key, nutrition.create(key, 0))
 	
 	# 初期栄養素を設定
-	if initial_storage != null:
-		initial_storage.apply_to(storage)
+	if initial != null:
+		initial.apply_to(storage)
 
 func initialize():
 	setup_storage(capacity, initial_capacity)
@@ -124,7 +125,8 @@ func update_terrain(to: TileData, coords: Vector2i) -> bool:
 	if not _are_soils_valid(from_soil, to_soil, coords):
 		return false
 	
-	if not _can_afford_terrain_change(from_soil, to_soil):
+	## 地形変更に必要な栄養素を支払えるかチェック
+	if not storage.can_pay(to_soil.cost):
 		return false
 	
 	print("[GroundField.update_terrain]: %s[%s(%s)]@%s" % [name, to.terrain_set, to.terrain, coords])
@@ -133,23 +135,11 @@ func update_terrain(to: TileData, coords: Vector2i) -> bool:
 
 ## 土壌の妥当性を検証
 func _are_soils_valid(from_soil: Soil, to_soil: Soil, coords: Vector2i) -> bool:
-	if not is_instance_valid(from_soil) or not is_instance_valid(to_soil):
+	if from_soil == null or to_soil == null:
 		push_warning("[GroundField.update_terrain]: Soil is invalid at ", coords)
 		return false
 	return true
 
-## 地形変更に必要な栄養素を支払えるかチェック
-func _can_afford_terrain_change(from_soil: Soil, to_soil: Soil) -> bool:
-	if not is_instance_valid(to_soil.cost):
-		return true
-
-	var cost: NutrientStorage
-	if from_soil.cost != null:
-		cost = NutrientStorage.merge([from_soil.cost.invert(), to_soil.cost])
-	else:
-		cost = to_soil.cost.create()
-	
-	return capacity.can_pay(cost)
 
 ## 地形の変更を適用
 func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords: Vector2i) -> void:
@@ -160,11 +150,13 @@ func _apply_terrain_change(from_soil: Soil, to_soil: Soil, to: TileData, coords:
 	cells_by_soil[to_soil.name].append(coords)
 	soils_changed.emit(from_soil.name, to_soil.name, coords)
 
-	# 統一されたインターフェースで栄養素を更新（配列作成不要）
-	if from_soil.cost != null:
-		capacity.sub_container(from_soil.cost)
-	if to_soil.cost != null:
-		capacity.add_container(to_soil.cost)
+	# 統一されたインターフェースで栄養素を更新
+	# コスト支払い
+	storage.sub_container(to_soil.cost)
+	# 容量の反映
+	capacity.sub_container(from_soil.capacity)
+	capacity.add_container(to_soil.capacity)
+
 
 	# タイルリスナーへの通知
 	if _tile_dicts.has(coords):
@@ -204,6 +196,7 @@ func is_terrain(coords: Vector2i, name: StringName) -> bool:
 func reset():
 	tile_map_data = _start_map_data
 	recalc_soils()
+	collision_updated.emit()
 
 ## Nutrientヘルパー関数
 
@@ -224,10 +217,13 @@ func listen_soil(node: Node2D) -> void:
 	node.tree_exited.connect(unlisten_soil.bind(node), CONNECT_ONE_SHOT)
 
 func unlisten_soil(node: Node2D) -> void:
-	var l = _tile_dicts[to_local_coords(node.global_position)]
+	var coords = to_local_coords(node.global_position)
+	var l = _tile_dicts[coords]
 	if not l.has(node):
 		return
 	l.erase(node)
+	if l.is_empty():
+		_tile_dicts.erase(coords)
 
 func to_local_coords(global_pos: Vector2) -> Vector2i:
 	return local_to_map(to_local(global_pos))

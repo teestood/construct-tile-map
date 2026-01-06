@@ -37,7 +37,7 @@ func clear() -> void:
 	nutrients.clear()
 	emit_changed()
 
-## Config からの初期化用内部メソッド（カプセル化）
+## 初期化用内部メソッド（カプセル化）
 func _set_nutrient_internal(key: StringName, nutrient: Nutrient) -> void:
 	nutrients[key] = nutrient
 	if debug:
@@ -54,6 +54,8 @@ func is_empty() -> bool:
 	return nutrients.size() == 0
 
 func can_pay(cost: NutrientContainer) -> bool:
+	if cost == null:
+		return true
 	for nut in cost.get_nutrients():
 		if not nutrients.has(nut.stats.name):
 			return false
@@ -62,15 +64,21 @@ func can_pay(cost: NutrientContainer) -> bool:
 	return true
 
 func sub(cost: NutrientContainer, n: float = 1.0) -> void:
+	if cost == null:
+		return 
 	for nut in cost.get_nutrients():
 		add_nutrient(nut.stats.name, -nut.amount * n)
 
 func add(gain: NutrientContainer, n: float = 1.0) -> void:
+	if gain == null:
+		return 
 	for nut in gain.get_nutrients():
 		add_nutrient(nut.stats.name, nut.amount * n)
 
 ## NutrientAmountをStorageに直接追加
 func add_amount(amount: NutrientAmount, multiplier: float = 1.0) -> void:
+	if amount == null:
+		return
 	amount.apply_to(self, multiplier)
 
 func merge_storages(storages: Array) -> void:

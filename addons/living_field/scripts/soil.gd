@@ -1,8 +1,13 @@
 @tool
 class_name Soil extends Resource
 
+## 土壌の名前
 @export var name: StringName
+## 栄養を蓄えられる量
+@export var capacity: NutrientAmount
+## タイル作成に必要な栄養消費量
 @export var cost: NutrientAmount
+## 衝突判定を持つかどうか、Navigationの更新をトリガーするための一時的な対応
 @export var has_collision: bool = false
 
 ## 土壌変化を試みる
