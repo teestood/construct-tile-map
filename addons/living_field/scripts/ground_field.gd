@@ -23,11 +23,9 @@ signal collision_updated()
 @export var debug: bool = false
 @export var challenge_rate = .1
 @export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
-@export var nutrition: NutrientPreloader  # 最大栄養素量、initial_capacityに加え、土壌状態に影響される
-@export var initial_capacity: NutrientAmount # 初期最大栄養素量
-@export var capacity: NutrientStorage# 栄養素
-@export var initial_storage: NutrientAmount # 初期栄養素
-@export var storage: NutrientStorage # storageの内、タイル分の栄養素を表す
+@export var nutrition: NutrientPreloader  # 栄養素プリローダー（初期化時に種類をロード）
+@export var capacity: NutrientStorage  # 最大栄養素量（initial_amountプロパティに初期値を設定）
+@export var storage: NutrientStorage  # 利用可能な栄養素（initial_amountプロパティに初期値を設定）
 @export_storage var cells_by_soil: Dictionary[StringName, Array] = {}
 
 @onready var timer: Timer = $Timer
@@ -62,23 +60,12 @@ func recalc_soils():
 			cells_by_soil[soil.name] = l
 		cells_by_soil[soil.name].append(coords)
 
-func setup_storage(storage: NutrientStorage, initial: NutrientAmount):
-	storage.clear()
-
-	# nutrition プリローダーから栄養素の種類を初期化
-	if nutrition != null:
-		for key in nutrition.get_resource_list():
-			storage._set_nutrient_internal(key, nutrition.create(key, 0))
-	
-	# 初期栄養素を設定
-	if initial != null:
-		initial.apply_to(storage)
-
 func initialize():
-	setup_storage(capacity, initial_capacity)
-	setup_storage(storage, initial_storage)
+	# NutrientStorageのinitial_amountから初期化
+	capacity.initialize_from_amount(capacity.initial_amount, nutrition)
+	storage.initialize_from_amount(storage.initial_amount, nutrition)
 
-	# 各土壌タイルのコストを計算
+	# 各土壌タイルのコストを容量に加算
 	for key in cells_by_soil.keys():
 		var soil = soil_preloader.get_resource(key)
 		if soil.cost == null:
@@ -196,6 +183,18 @@ func is_terrain(coords: Vector2i, name: StringName) -> bool:
 func reset():
 	tile_map_data = _start_map_data
 	recalc_soils()
+	
+	# 初期値にリセット
+	capacity.reset_to_initial(nutrition)
+	storage.reset_to_initial(nutrition)
+	
+	# 土壌コストを再計算
+	for key in cells_by_soil.keys():
+		var soil = soil_preloader.get_resource(key)
+		if soil.cost != null:
+			var tile_count = len(cells_by_soil[key])
+			soil.cost.apply_to(capacity, tile_count)
+	
 	collision_updated.emit()
 
 ## Nutrientヘルパー関数

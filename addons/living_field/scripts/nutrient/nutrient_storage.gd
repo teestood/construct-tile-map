@@ -10,6 +10,7 @@ signal nutrient_added
 signal nutrient_changed(key: StringName, amount: float)
 
 @export var debug: bool = false
+@export var initial_amount: NutrientAmount  # 初期値（カプセル化）
 var nutrients: Dictionary[StringName, Nutrient] = {}
 
 func _init() -> void:
@@ -34,6 +35,26 @@ func add_nutrient(key: StringName, amount: float) -> void:
 
 func clear() -> void:
 	nutrients.clear()
+
+## 初期値から栄養素を設定（GroundFieldの初期化統合）
+func initialize_from_amount(amount: NutrientAmount, preloader: NutrientPreloader = null) -> void:
+	"""initial_amountまたは指定したNutrientAmountから栄養素を初期化"""
+	clear()
+	
+	# プリローダーから栄養素の種類を初期化
+	if preloader != null:
+		for key in preloader.get_resource_list():
+			_set_nutrient_internal(key, preloader.create(key, 0))
+	
+	# 初期値を適用
+	var target_amount = amount if amount != null else initial_amount
+	if target_amount != null:
+		target_amount.apply_to(self)
+
+func reset_to_initial(preloader: NutrientPreloader = null) -> void:
+	"""initial_amountに基づいて栄養素をリセット"""
+	initialize_from_amount(initial_amount, preloader)
+	emit_changed()
 
 ## 初期化用内部メソッド（カプセル化）
 func _set_nutrient_internal(key: StringName, nutrient: Nutrient) -> void:

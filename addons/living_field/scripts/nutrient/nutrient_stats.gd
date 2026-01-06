@@ -10,7 +10,8 @@ class_name NutrientStats extends Resource
 @export var color: Color = Color.WHITE
 
 func _to_string() -> String:
-	resource_name = _make_string()
+	if Engine.is_editor_hint():
+		set_deferred("resource_name", _make_string())
 	return resource_name
 
 func _make_string() -> String:

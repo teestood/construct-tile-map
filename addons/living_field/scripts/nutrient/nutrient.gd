@@ -8,13 +8,19 @@ signal quantity_changed(val: float)
 	get: return amount
 	set(v): 
 		amount = v
+		_update_resource_name()
 		quantity_changed.emit(v)
 
 func _to_string() -> String:
-	resource_name = _make_string()
 	return resource_name
 
 func _make_string() -> String:
 	if stats == null:
-		return "invalid stats: %d" % [amount]
-	return "%s: %d" % [stats.name, amount]
+		return "invalid nutrient(%d)" % [amount]
+	return "%s(%d)" % [stats.name, amount]
+
+func _update_resource_name() -> void:
+	if not Engine.is_editor_hint():
+		return
+	resource_name = _make_string()
+	notify_property_list_changed()
