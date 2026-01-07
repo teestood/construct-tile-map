@@ -40,6 +40,8 @@ func setup(tilemap: TileMapLayer, coords: Vector2i) -> void:
 	var soil = Soil.from_tiledata(tiledata)
 	if soil != null:
 		audio.stream = soil.building_sound
+	else:
+		audio.stream = null
 
 func play(duration: float = .5) -> void:
 	var tw = create_tween()

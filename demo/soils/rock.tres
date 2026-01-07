@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="Soil" load_steps=9 format=3 uid="uid://c1tb13xmcr5r1"]
 
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_4p27p"]
-[ext_resource type="AudioStream" uid="uid://d0jslo7xqy8g8" path="res://demo/arts/sounds/building.wav" id="1_n4sws"]
+[ext_resource type="AudioStream" uid="uid://da577pgcbrhrk" path="res://demo/arts/sounds/stone_construct.wav" id="1_n4sws"]
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_tb6hj"]
 [ext_resource type="Resource" uid="uid://qlihgprvjja5" path="res://demo/nutrients/s.tres" id="2_ku3wf"]
 [ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_ku3wf"]
