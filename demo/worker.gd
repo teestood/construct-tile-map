@@ -82,10 +82,14 @@ func _build_tile():
 func _on_timer_timeout() -> void:
 	if state != Worker.State.IDLE:
 		return
-	var l = len(plan.progress_cells)
-	if l == 0:
+
+	var progress = plan.get_progress()
+	if progress.is_empty() or not progress["can_construct"]:
+		print("[Worker] no constructable tiles", progress)
 		return
-	target_coords = plan.progress_cells[randi_range(0, l-1)]
+
+	target_coords = progress["coords"]
+
 	print("[Worker] destination: ", plan.map_to_global(target_coords), ":@", target_coords)
 	agent.target_position = plan.map_to_global(target_coords)
 	state = Worker.State.MOVE

@@ -48,6 +48,16 @@ func _update_progress_cells():
 
 	if debug:
 		print("ConstructPlan: UpdateProgressCells finished")
+	
+var _tmp_progress: Dictionary = {}
+
+## 建設可能なタイルの座標を1つ返す。存在しない場合は空のDictionaryを返す
+func try_get_progress() -> Dictionary:
+	_tmp_progress.clear()
+	if _progress_cells.size() == 0:
+		return _tmp_progress
+	_tmp_progress ["coords"] = _progress_cells[0]
+	return _tmp_progress
 
 ## Checks if construction can be started. Returns true if at least one buildable tile exists.
 func can_construct() -> bool:
@@ -62,6 +72,17 @@ func can_construct() -> bool:
 		if soil != null and ground.storage.can_pay(soil.cost):
 			return true
 	return false
+
+func can_construct_at(coords: Vector2i) -> bool:
+	if get_cell_source_id(coords) == -1:
+		return false
+	var tiledata = get_cell_tile_data(coords)
+	if tiledata == null:
+		return false
+	var soil = tiledata.get_custom_data("Soil")
+	if soil == null or not ground.storage.can_pay(soil.cost):
+		return false
+	return true
 
 ## 即座に完成図を建築に適用する
 func instant_construct():

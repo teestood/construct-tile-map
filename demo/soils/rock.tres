@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_ku3wf"]
 
 [sub_resource type="Resource" id="Resource_n4sws"]
+resource_name = "s(2)"
 script = ExtResource("1_4p27p")
 stats = ExtResource("2_ku3wf")
 amount = 2.0

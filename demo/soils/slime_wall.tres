@@ -7,12 +7,14 @@
 [ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_l0se0"]
 
 [sub_resource type="Resource" id="Resource_46203"]
+resource_name = "c(3)"
 script = ExtResource("1_l0se0")
 stats = ExtResource("2_l0se0")
 amount = 3.0
 metadata/_custom_type_script = "uid://dukfighedo7m8"
 
 [sub_resource type="Resource" id="Resource_8xqek"]
+resource_name = "h(2)"
 script = ExtResource("1_l0se0")
 stats = ExtResource("3_46203")
 amount = 2.0
@@ -24,6 +26,7 @@ nutrients = Array[ExtResource("1_l0se0")]([SubResource("Resource_46203"), SubRes
 metadata/_custom_type_script = "uid://cdvj7tlvjoj1x"
 
 [sub_resource type="Resource" id="Resource_uouod"]
+resource_name = "c(2)"
 script = ExtResource("1_l0se0")
 stats = ExtResource("2_l0se0")
 amount = 2.0
