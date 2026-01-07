@@ -10,6 +10,9 @@ var advance_build_action = advance_build
 
 @export var ground: GroundField 
 @export var default_tile: int = -1
+@export_group("Build Scheduler")
+@export var scheduler: BuildScheduler
+@export var max_scan_per_tick: int = 32
 @export_group("Debug")
 @export var debug: bool = false
 @export_group("")
@@ -28,6 +31,13 @@ func _ready() -> void:
 	self_modulate = Color(1, 1, 1, 0.2)
 
 	assert(is_instance_valid(ground), "construct_tile_map must be valid")
+
+	if scheduler == null:
+		scheduler = BuildScheduler.new()
+	scheduler.max_scan_per_tick = max_scan_per_tick
+	if is_instance_valid(ground) and is_instance_valid(ground.storage):
+		if not ground.storage.nutrient_changed.is_connected(scheduler.on_nutrient_changed):
+			ground.storage.nutrient_changed.connect(scheduler.on_nutrient_changed)
 	_update_progress_cells()
 
 func _update_progress_cells():
@@ -48,30 +58,13 @@ func _update_progress_cells():
 
 	if debug:
 		print("ConstructPlan: UpdateProgressCells finished")
+
+	if scheduler != null:
+		scheduler.on_progress_cells_changed(_progress_cells.size())
 	
-var _tmp_progress: Dictionary = {}
-
 ## 建設可能なタイルの座標を1つ返す。存在しない場合は空のDictionaryを返す
-func try_get_progress() -> Dictionary:
-	_tmp_progress.clear()
-	if _progress_cells.size() == 0:
-		return _tmp_progress
-	_tmp_progress ["coords"] = _progress_cells[0]
-	return _tmp_progress
-
-## Checks if construction can be started. Returns true if at least one buildable tile exists.
-func can_construct() -> bool:
-	var cells = get_used_cells()
-	for coords in cells:
-		if get_cell_source_id(coords) == -1:
-			continue
-		var tiledata = get_cell_tile_data(coords)
-		if tiledata == null:
-			continue
-		var soil = tiledata.get_custom_data("Soil")
-		if soil != null and ground.storage.can_pay(soil.cost):
-			return true
-	return false
+func get_progress() -> Dictionary:
+	return scheduler.get_progress(self)
 
 func can_construct_at(coords: Vector2i) -> bool:
 	if get_cell_source_id(coords) == -1:
@@ -79,7 +72,7 @@ func can_construct_at(coords: Vector2i) -> bool:
 	var tiledata = get_cell_tile_data(coords)
 	if tiledata == null:
 		return false
-	var soil = tiledata.get_custom_data("Soil")
+	var soil = Soil.from_tiledata(tiledata)
 	if soil == null or not ground.storage.can_pay(soil.cost):
 		return false
 	return true
@@ -107,21 +100,17 @@ func instant_construct():
 		print("ConstructPlan: InstantConstruct finished")
 
 func advance_build() -> bool:
-	if _progress_cells.size() == 0:
-		_update_progress_cells()
-		if _progress_cells.size() == 0:
-			return true
+	var res := get_progress()
 	
-	var l = len(_progress_cells)
-	var coords = _progress_cells[randi_range(0, l-1)]
-	var to = get_cell_tile_data(coords)
-	
+	if res.is_empty() or not res.get("can_construct", false):
+		return false
+	var coords: Vector2i = res["coords"]
 	apply_to_ground(coords)
-	return false
+	return true
 
 ## 指定した座標の建築状況を進める
 func apply_to_ground(coords: Vector2i) -> Soil:
-	if progress_cells.has(coords) == false:
+	if not progress_cells.has(coords):
 		return null
 	var id = get_cell_source_id(coords)
 	if id == -1:# 空タイル
@@ -134,8 +123,8 @@ func apply_to_ground(coords: Vector2i) -> Soil:
 
 	ground.update_terrain(to, coords)
 	_progress_cells.erase(coords)
-
-
+	if scheduler != null:
+		scheduler.on_progress_cells_changed(_progress_cells.size())
 	return Soil.from_tiledata(to)
 
 ## 建築完了しているかどうかを判定する
