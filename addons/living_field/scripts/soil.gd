@@ -10,6 +10,9 @@ class_name Soil extends Resource
 ## 衝突判定を持つかどうか、Navigationの更新をトリガーするための一時的な対応
 @export var has_collision: bool = false
 
+@export_group("Sounds")
+@export var building_sound: AudioStream
+
 ## 土壌変化を試みる
 func _to_string() -> String:
 	if resource_name != name:

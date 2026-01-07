@@ -28,3 +28,6 @@ hframes = 3
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(205, -100)
 script = ExtResource("3_jnwkj")
+
+[node name="AudioListener2D" type="AudioListener2D" parent="."]
+current = true

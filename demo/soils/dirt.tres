@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=7 format=3 uid="uid://4mih1xvrbamo"]
+[gd_resource type="Resource" script_class="Soil" load_steps=8 format=3 uid="uid://4mih1xvrbamo"]
 
+[ext_resource type="AudioStream" uid="uid://d0jslo7xqy8g8" path="res://demo/arts/sounds/building.wav" id="1_2mhd0"]
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_s16fs"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_ywwlt"]
 [ext_resource type="Resource" uid="uid://qlihgprvjja5" path="res://demo/nutrients/s.tres" id="2_krwo0"]
@@ -22,4 +23,5 @@ resource_name = "dirt"
 script = ExtResource("1_s16fs")
 name = &"dirt"
 capacity = SubResource("Resource_ce7ei")
+building_sound = ExtResource("1_2mhd0")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

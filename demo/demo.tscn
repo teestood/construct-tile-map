@@ -1,4 +1,4 @@
-[gd_scene load_steps=52 format=4 uid="uid://euewo1se7sun"]
+[gd_scene load_steps=53 format=4 uid="uid://euewo1se7sun"]
 
 [ext_resource type="Script" uid="uid://bkhtk4hej2bk6" path="res://demo/demo.gd" id="1_qvfii"]
 [ext_resource type="Script" uid="uid://dcrt3bubr0osk" path="res://demo/spawner/plant_spawner.gd" id="2_6ihnu"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://cd5n4twewddqd" path="res://addons/living_field/scripts/ground_field.gd" id="16_norpd"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="17_7eb7w"]
 [ext_resource type="Script" uid="uid://b28gq78kvpi2l" path="res://addons/living_field/scripts/reset_construct_plan.gd" id="19_7h7tp"]
+[ext_resource type="PackedScene" uid="uid://dmi1ddswgg7c1" path="res://addons/living_field/scripts/animation/tile_build_animation.tscn" id="20_7h7tp"]
 [ext_resource type="Resource" uid="uid://d1kigwmwyrst2" path="res://demo/nutrients/c.tres" id="22_a0ng0"]
 [ext_resource type="Script" uid="uid://ddhj0cycr6xwh" path="res://demo/builder.gd" id="22_f73r4"]
 [ext_resource type="Script" uid="uid://fylqmytnns8n" path="res://addons/living_field/utility/directory_resource_preloader.gd" id="22_fla3q"]
@@ -218,6 +219,7 @@ linear_damp_mode = 1
 linear_damp = 3.0
 script = ExtResource("29_143ej")
 plan = NodePath("../../../Plans/GroundPlan")
+animation_pack = ExtResource("20_7h7tp")
 tileshape = SubResource("RectangleShape2D_u5t42")
 
 [node name="Timer" type="Timer" parent="Field/Ground/Entities/Worker"]

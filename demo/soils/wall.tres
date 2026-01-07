@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=9 format=3 uid="uid://b2naxlvdloysf"]
+[gd_resource type="Resource" script_class="Soil" load_steps=10 format=3 uid="uid://b2naxlvdloysf"]
 
+[ext_resource type="AudioStream" uid="uid://d0jslo7xqy8g8" path="res://demo/arts/sounds/building.wav" id="1_ob4qn"]
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_qmxpg"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_u1k5l"]
 [ext_resource type="Resource" uid="uid://qlihgprvjja5" path="res://demo/nutrients/s.tres" id="2_seh00"]
@@ -36,4 +37,5 @@ name = &"wall"
 capacity = SubResource("Resource_ob4qn")
 cost = SubResource("Resource_seh00")
 has_collision = true
+building_sound = ExtResource("1_ob4qn")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

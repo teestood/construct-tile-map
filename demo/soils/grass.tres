@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=10 format=3 uid="uid://ju0f0cxwtxrk"]
+[gd_resource type="Resource" script_class="Soil" load_steps=11 format=3 uid="uid://ju0f0cxwtxrk"]
 
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_eysgy"]
+[ext_resource type="AudioStream" uid="uid://d0jslo7xqy8g8" path="res://demo/arts/sounds/building.wav" id="1_fu1fm"]
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_juyuu"]
 [ext_resource type="Resource" uid="uid://d1kigwmwyrst2" path="res://demo/nutrients/c.tres" id="2_qk5ol"]
 [ext_resource type="Resource" uid="uid://driu7imf8l6vs" path="res://demo/nutrients/o.tres" id="3_7neys"]
@@ -36,4 +37,5 @@ script = ExtResource("1_eysgy")
 name = &"grass"
 capacity = SubResource("Resource_qk5ol")
 cost = SubResource("Resource_83yq7")
+building_sound = ExtResource("1_fu1fm")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"

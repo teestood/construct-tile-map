@@ -5,6 +5,8 @@ class_name Worker extends RigidBody2D
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var timer: Timer = $Timer
 
+@export var animation_pack: PackedScene
+
 @export var tileshape: RectangleShape2D
 
 enum State{
@@ -71,8 +73,12 @@ func _build_tile():
 	state = Worker.State.WORK
 
 	# 建設アニメーションを再生し、完了後に地形を適用する
-	var anim = TileBuildAnimation.instantiate(plan, target_coords)
+
+	var anim = animation_pack.instantiate() as TileBuildAnimation
+	anim.setup(plan, target_coords)
+	##var anim = TileBuildAnimation.instantiate(plan, target_coords)
 	plan.ground.add_child(anim)
+	anim.play(.5)
 
 	await anim.finished
 	print("applying to ground at: ", target_coords)

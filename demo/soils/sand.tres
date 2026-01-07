@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="Soil" load_steps=7 format=3 uid="uid://d4jg106js17sa"]
+[gd_resource type="Resource" script_class="Soil" load_steps=8 format=3 uid="uid://d4jg106js17sa"]
 
 [ext_resource type="Script" uid="uid://dukfighedo7m8" path="res://addons/living_field/scripts/nutrient/nutrient.gd" id="1_4u4kx"]
+[ext_resource type="AudioStream" uid="uid://d0jslo7xqy8g8" path="res://demo/arts/sounds/building.wav" id="1_ua05u"]
 [ext_resource type="Script" uid="uid://2yubyvv2nn6e" path="res://addons/living_field/scripts/soil.gd" id="1_xsqnu"]
 [ext_resource type="Resource" uid="uid://qlihgprvjja5" path="res://demo/nutrients/s.tres" id="2_c1ajt"]
 [ext_resource type="Script" uid="uid://cdvj7tlvjoj1x" path="res://addons/living_field/scripts/nutrient/nutrient_amount.gd" id="3_ua05u"]
@@ -22,4 +23,5 @@ resource_name = "sand"
 script = ExtResource("1_xsqnu")
 name = &"sand"
 capacity = SubResource("Resource_2u825")
+building_sound = ExtResource("1_ua05u")
 metadata/_custom_type_script = "uid://2yubyvv2nn6e"
