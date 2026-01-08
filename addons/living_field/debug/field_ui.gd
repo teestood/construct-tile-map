@@ -9,7 +9,6 @@ var _refresh_action = _refresh
 
 @onready var ui_nutrients: VBoxContainer = %Nutrients
 @onready var ui_soils: VBoxContainer = %Soils
-@onready var ui_speed: Label = %Speed
 
 var _soil_dicts: Dictionary[StringName, Label] = {}
 var _signals_connected: bool = false

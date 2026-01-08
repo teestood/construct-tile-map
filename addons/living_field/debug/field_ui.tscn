@@ -62,19 +62,6 @@ theme_override_constants/margin_bottom = 3
 layout_mode = 2
 theme = SubResource("Theme_vohag")
 
-[node name="SpeedBlock" type="HBoxContainer" parent="M/V"]
-layout_mode = 2
-
-[node name="Speed_Title" type="Label" parent="M/V/SpeedBlock"]
-layout_mode = 2
-theme_type_variation = &"TitleLabel"
-theme_override_colors/font_color = Color(0.6, 0.87999994, 1, 1)
-text = "Speed:"
-
-[node name="Speed" type="Label" parent="M/V/SpeedBlock"]
-unique_name_in_owner = true
-layout_mode = 2
-
 [node name="HSeparator" type="HSeparator" parent="M/V"]
 layout_mode = 2
 

@@ -12,7 +12,6 @@ signal soils_changed(from: StringName, to: StringName, coords: Vector2i)
 signal collision_updated()
 
 @export var debug: bool = false
-@export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
 @export var nutrition: NutrientPreloader  # 栄養素プリローダー（初期化時に種類をロード）
 @export var capacity: NutrientStorage  # 最大栄養素量（initial_amountプロパティに初期値を設定）
 @export var storage: NutrientStorage  # 利用可能な栄養素（initial_amountプロパティに初期値を設定）
@@ -20,7 +19,6 @@ signal collision_updated()
 
 @onready var soil_preloader: ResourcePreloader = $SoilPreloader
 var _start_map_data: PackedByteArray
-var _fctx: FieldContext
 var _terrain_cache: Dictionary[StringName, PackedInt32Array] = {}
 
 ## タイル上に存在するノードリスト
@@ -33,8 +31,6 @@ func _ready() -> void:
 
 	recalc_soils()
 	_start_map_data = tile_map_data
-
-	_fctx = FieldContext.create(nutrition, cells_by_soil)
 
 ## Soilの座標リストの統計を再計算する
 func recalc_soils():
@@ -103,7 +99,8 @@ func update_terrain(to: TileData, coords: Vector2i) -> bool:
 	if not storage.can_pay(to_soil.cost):
 		return false
 	
-	print("[GroundField.update_terrain]: %s[%s(%s)]@%s" % [name, to.terrain_set, to.terrain, coords])
+	if debug:
+		print("[GroundField.update_terrain]: %s[%s(%s)]@%s" % [name, to.terrain_set, to.terrain, coords])
 	_apply_terrain_change(from_soil, to_soil, to, coords)
 	return true
 

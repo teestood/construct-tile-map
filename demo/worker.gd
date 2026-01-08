@@ -96,6 +96,6 @@ func _on_timer_timeout() -> void:
 
 	target_coords = progress["coords"]
 
-	print("[Worker] destination: ", plan.map_to_global(target_coords), ":@", target_coords)
+	#print("[Worker] destination: ", plan.map_to_global(target_coords), ":@", target_coords)
 	agent.target_position = plan.map_to_global(target_coords)
 	state = Worker.State.MOVE
