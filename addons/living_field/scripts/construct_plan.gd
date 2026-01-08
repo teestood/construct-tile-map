@@ -21,6 +21,9 @@ var _progress_cells: Array[Vector2i] = []
 var progress_cells: Array[Vector2i]:
 	get:
 		return _progress_cells
+	
+func is_finished() -> bool:
+	return _progress_cells.size() == 0
 
 func _ready() -> void:
 	if Engine.is_editor_hint():

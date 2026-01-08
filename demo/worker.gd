@@ -67,7 +67,6 @@ func _build_tile():
 		if result.collider is RigidBody2D:
 			var node = result.collider as RigidBody2D
 			var diff = node.global_position - target_pos
-			print("apply impulse to: ", result.collider.name, "@", diff.normalized() * 200)
 			node.apply_impulse(diff.normalized() * 200, diff)
 	
 	state = Worker.State.WORK
@@ -81,16 +80,17 @@ func _build_tile():
 	anim.play(.5)
 
 	await anim.finished
-	print("applying to ground at: ", target_coords)
 	plan.apply_to_ground(target_coords)
 	state = Worker.State.IDLE
 
 func _on_timer_timeout() -> void:
 	if state != Worker.State.IDLE:
 		return
+	if plan.is_finished():
+		return
 
 	var progress = plan.get_progress()
-	if progress.is_empty() or not progress["can_construct"]:
+	if not progress["can_construct"]:
 		print("[Worker] no constructable tiles", progress)
 		return
 

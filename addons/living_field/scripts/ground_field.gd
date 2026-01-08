@@ -3,15 +3,6 @@ class_name GroundField extends TileMapLayer
 
 # Utility #
 
-@export_tool_button("SetupNode", "Callable")
-@warning_ignore("unused_private_class_variable")
-var _setup_node_action = func():
-	timer = get_node_or_null("Timer")
-	if timer == null:
-		timer = Timer.new()
-		add_child(timer)
-		timer.owner = get_tree().edited_scene_root
-		timer.name = "Timer"
 @export_tool_button("RecalcSoils", "Callable")
 @warning_ignore("unused_private_class_variable")
 var _recalc_soils_action = recalc_soils
@@ -21,14 +12,12 @@ signal soils_changed(from: StringName, to: StringName, coords: Vector2i)
 signal collision_updated()
 
 @export var debug: bool = false
-@export var challenge_rate = .1
 @export var max_challenge: int = 100 # フレームごとの最大土壌変化試行回数
 @export var nutrition: NutrientPreloader  # 栄養素プリローダー（初期化時に種類をロード）
 @export var capacity: NutrientStorage  # 最大栄養素量（initial_amountプロパティに初期値を設定）
 @export var storage: NutrientStorage  # 利用可能な栄養素（initial_amountプロパティに初期値を設定）
 @export_storage var cells_by_soil: Dictionary[StringName, Array] = {}
 
-@onready var timer: Timer = $Timer
 @onready var soil_preloader: ResourcePreloader = $SoilPreloader
 var _start_map_data: PackedByteArray
 var _fctx: FieldContext
@@ -75,8 +64,6 @@ func initialize():
 	
 	storage.emit_changed()
 	capacity.emit_changed()
-
-	timer.start(challenge_rate)
 
 
 # soil移行機会を実行する座標を選択する

@@ -27,7 +27,6 @@ func _ready() -> void:
 
 
 func _refresh():
-	ui_speed.text = str(1. / target_field.challenge_rate)
 	_clear_children(ui_nutrients)
 
 	var nutrients = target_field.capacity.nutrients
@@ -66,7 +65,6 @@ func _refresh():
 		target_field.storage.nutrient_changed.connect(_on_Nutrient_changed.bind(true))
 
 func _on_Nutrient_changed(key: StringName, amount: float, is_storage: bool):
-	print(("[NutrientChanged][Storage]" if is_storage else "[NutrientChanged][Capacity]") + ": %s = %d" % [key, amount])
 	if is_storage:
 		var ui_storage: SpinBox = ui_nutrients.get_node_or_null(key + "/Amount")
 		if ui_storage != null:
@@ -77,10 +75,7 @@ func _on_Nutrient_changed(key: StringName, amount: float, is_storage: bool):
 			_on_Nutrient_quantity_changed(ui_capacity, amount)
 
 
-
 func _on_GroundField_soils_changed(from: StringName, to: StringName, _coords: Vector2i):
-	print("SOIL CHANGED:", from, "->", to)
-	
 	# from が _soil_dicts に存在する場合のみ更新
 	if _soil_dicts.has(from):
 		_soil_dicts[from].text = str(len(target_field.cells_by_soil[from]))
