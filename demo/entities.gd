@@ -3,6 +3,9 @@ class_name Entities extends Node2D
 @export var spawners: Array[PlantSpawner]
 @export var ground: GroundField
 
+## Spawn済みのplant管理用
+var exists: Dictionary[Vector2i, Node] = {}
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	for spawner in spawners:
@@ -21,14 +24,27 @@ func _on_child_exiting_tree(child: Node) -> void:
 
 func _on_Spawner_queued(req: PlantSpawnRequest, spawner: PlantSpawner) -> void:
 	var coords = _pick_rand(ground.cells_by_soil[&"grass"])
+	if exists.has(coords):
+		return
+
 	var plant = req.pack.instantiate() as Plant
-	var newposition = ground.map_to_local(coords) + _rand_vec(8.)
-	plant.position = newposition
+
+	match req.setup:
+		PlantSpawnRequest.Setup.RANDOM:
+			plant.position = ground.map_to_local(coords) + _rand_vec(8.)
+		PlantSpawnRequest.Setup.DEFAULT:
+			plant.position = Vector2.ZERO
+		_:
+			push_error("Unknown PlantSpawnRequest.Setup: %s" % req.setup)
 
 	assert(coords == ground.to_local_coords(plant.global_position), "coords mismatch: %s vs %s" % [coords, ground.to_local_coords(plant.global_position)])
 
-	add_child(plant)
+	exists[coords] = plant
+	plant.tree_exited.connect(func():
+		exists.erase(coords)
+	)
 
+	add_child(plant)
 	spawner.accept_spawn(plant)
 
 func _pick_rand(l: Array) -> Vector2i:

@@ -198,11 +198,10 @@ script = ExtResource("25_a0ng0")
 spawners = [NodePath("PlantSpawner")]
 ground = NodePath("..")
 
-[node name="PlantSpawner" type="ResourcePreloader" parent="Field/Ground/Entities" node_paths=PackedStringArray("ground")]
+[node name="PlantSpawner" type="ResourcePreloader" parent="Field/Ground/Entities"]
 resources = [PackedStringArray("plant"), [ExtResource("3_fla3q")]]
 script = ExtResource("2_6ihnu")
 interval = 0.2
-ground = NodePath("../..")
 
 [node name="Timer" type="Timer" parent="Field/Ground/Entities/PlantSpawner"]
 wait_time = 0.2

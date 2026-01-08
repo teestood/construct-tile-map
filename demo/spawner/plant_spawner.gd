@@ -8,15 +8,13 @@ signal queued(req: PlantSpawnRequest)
 signal instantiated(node: Node2D)
 
 @export var interval: float = 5.0
-@export var ground: GroundField
 
 @onready var timer: Timer = $Timer
 
-## Spawn済みのplant管理用
-var exists: Dictionary[Vector2i, Node] = {}
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	timer.timeout.connect(_spawn_random)
 	timer.start(interval)
 
