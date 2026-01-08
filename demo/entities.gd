@@ -23,7 +23,7 @@ func _on_child_exiting_tree(child: Node) -> void:
 		child.leave_ground()
 
 func _on_Spawner_queued(req: PlantSpawnRequest, spawner: PlantSpawner) -> void:
-	var coords = _pick_rand(ground.cells_by_soil[&"grass"])
+	var coords = _pick_rand_sparse(ground.cells_by_soil[&"grass"], 5)
 	if exists.has(coords):
 		return
 
@@ -49,6 +49,10 @@ func _on_Spawner_queued(req: PlantSpawnRequest, spawner: PlantSpawner) -> void:
 
 func _pick_rand(l: Array) -> Vector2i:
 	var idx = randi() % l.size()
+	return l[idx]
+
+func _pick_rand_sparse(l: Array, step: int = 1) -> Vector2i:
+	var idx = min(snappedi(randi() % l.size(), step), l.size() - 1)
 	return l[idx]
 
 func _rand_vec(magnitude: float) -> Vector2:
